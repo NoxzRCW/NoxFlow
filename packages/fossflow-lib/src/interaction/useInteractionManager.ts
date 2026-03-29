@@ -314,13 +314,6 @@ export const useInteractionManager = () => {
     (e: SlimMouseEvent) => {
       if (!rendererRef.current) return;
 
-      if (e.type === 'mousedown' && handlePanMouseDown(e)) {
-        return;
-      }
-      if (e.type === 'mouseup' && handlePanMouseUp(e)) {
-        return;
-      }
-
       const uiState = uiStateApi.getState();
 
       const nextMouse = getMouse({
@@ -331,6 +324,16 @@ export const useInteractionManager = () => {
         mouseEvent: e,
         rendererSize
       });
+
+      // Update state mouse first so handlers have up-to-date coords
+      uiState.actions.setMouse(nextMouse);
+
+      if (e.type === 'mousedown' && handlePanMouseDown(e)) {
+        return;
+      }
+      if (e.type === 'mouseup' && handlePanMouseUp(e)) {
+        return;
+      }
 
       if (e.type === 'mousemove') {
         scheduleUpdate(nextMouse, e, (update) => {
@@ -527,12 +530,15 @@ export const useInteractionManager = () => {
         if (e.touches.length > 0) return;
       }
 
+      const clientX = ts.lastSingleTouch ? ts.lastSingleTouch.x : 0;
+      const clientY = ts.lastSingleTouch ? ts.lastSingleTouch.y : 0;
+
       ts.lastSingleTouch = null;
 
       onMouseEvent({
         ...e,
-        clientX: 0,
-        clientY: 0,
+        clientX,
+        clientY,
         type: 'mouseup',
         button: 0
       });
