@@ -9,7 +9,6 @@ export const usePanHandlers = () => {
   const actions = useUiStateStore((state) => state.actions);
   const panSettings = useUiStateStore((state) => state.panSettings);
   const rendererEl = useUiStateStore((state) => state.rendererEl);
-  const mouseTile = useUiStateStore((state) => state.mouse.position.tile);
   const uiStateApi = useUiStateStoreApi();
   const scene = useScene();
   const isPanningRef = useRef(false);
@@ -41,13 +40,15 @@ export const usePanHandlers = () => {
   const isEmptyArea = useCallback((e: SlimMouseEvent): boolean => {
     if (!rendererEl || e.target !== rendererEl) return false;
 
+    const currentMouseTile = uiStateApi.getState().mouse.position.tile;
+
     const itemAtTile = getItemAtTile({
-      tile: mouseTile,
+      tile: currentMouseTile,
       scene
     });
 
     return !itemAtTile;
-  }, [rendererEl, mouseTile, scene]);
+  }, [rendererEl, uiStateApi, scene]);
 
   const handleMouseDown = useCallback((e: SlimMouseEvent): boolean => {
     if (e.button === 1 && panSettings.middleClickPan) {
