@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Isoflow } from 'fossflow';
 import { flattenCollections } from '@isoflow/isopacks/dist/utils';
 import isoflowIsopack from '@isoflow/isopacks/dist/isoflow';
@@ -16,6 +16,23 @@ import { allLocales } from 'fossflow';
 import { useIconPackManager, IconPackName } from './services/iconPackManager';
 import './App.css';
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
+
+// Hook to detect mobile viewport
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth <= breakpoint
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile(e.matches);
+    handler(mql);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, [breakpoint]);
+
+  return isMobile;
+}
 
 // Load core isoflow icons (always loaded)
 const coreIcons = flattenCollections([isoflowIsopack]);
@@ -691,80 +708,182 @@ function EditorPage() {
     };
   }, [currentDiagram, hasUnsavedChanges]);
 
+  const isMobile = useIsMobile();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const closeMobileMenu = useCallback(() => setShowMobileMenu(false), []);
+
   return (
     <div className="App">
+      {/* ── Mobile Bottom Sheet Menu ─────────────────────── */}
+      {isMobile && showMobileMenu && (
+        <div className="dialog-overlay" onClick={closeMobileMenu}>
+          <div
+            className="dialog mobile-bottom-sheet"
+            onClick={(e) => e.stopPropagation()}
+            style={{ paddingTop: '12px' }}
+          >
+            <div style={{
+              width: '36px', height: '4px', borderRadius: '2px',
+              backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 auto 16px'
+            }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                className="mobile-sheet-btn"
+                onClick={() => { closeMobileMenu(); newDiagram(); }}
+              >
+                {t('nav.newDiagram')}
+              </button>
+              {serverStorageAvailable && (
+                <button
+                  className="mobile-sheet-btn"
+                  onClick={() => { closeMobileMenu(); setShowDiagramManager(true); }}
+                  style={{ backgroundColor: 'rgba(59,130,246,0.15)', color: '#60a5fa', borderColor: 'rgba(59,130,246,0.25)' }}
+                >
+                  🌐 {t('nav.serverStorage')}
+                </button>
+              )}
+              <button
+                className="mobile-sheet-btn"
+                onClick={() => { closeMobileMenu(); setShowSaveDialog(true); }}
+              >
+                {t('nav.saveSessionOnly')}
+              </button>
+              <button
+                className="mobile-sheet-btn"
+                onClick={() => { closeMobileMenu(); setShowLoadDialog(true); }}
+              >
+                {t('nav.loadSessionOnly')}
+              </button>
+              <button
+                className="mobile-sheet-btn"
+                onClick={() => { closeMobileMenu(); setShowExportDialog(true); }}
+                style={{ backgroundColor: 'rgba(59,130,246,0.15)', color: '#60a5fa', borderColor: 'rgba(59,130,246,0.25)' }}
+              >
+                💾 {t('nav.exportFile')}
+              </button>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '4px 0' }} />
+              <ChangeLanguage />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="toolbar">
         {!isReadonlyUrl && (
           <>
-            <button onClick={newDiagram}>{t('nav.newDiagram')}</button>
-            {serverStorageAvailable && (
-              <button
-                onClick={() => {
-                  return setShowDiagramManager(true);
-                }}
-                style={{ backgroundColor: '#2196F3', color: 'white' }}
-              >
-                🌐 {t('nav.serverStorage')}
-              </button>
+            {/* ── Mobile: compact bottom bar ──────────────── */}
+            {isMobile ? (
+              <>
+                <button
+                  onClick={() => setShowMobileMenu(true)}
+                  style={{ fontSize: '18px', padding: '10px 14px' }}
+                  aria-label="Menu"
+                >
+                  ☰
+                </button>
+                <button
+                  onClick={() => {
+                    if (currentDiagram && hasUnsavedChanges) {
+                      saveDiagram();
+                    }
+                  }}
+                  disabled={!currentDiagram || !hasUnsavedChanges}
+                  style={{
+                    backgroundColor:
+                      currentDiagram && hasUnsavedChanges ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.03)',
+                    color: currentDiagram && hasUnsavedChanges ? '#fbbf24' : 'rgba(255,255,255,0.3)',
+                    borderColor: currentDiagram && hasUnsavedChanges ? 'rgba(250,204,21,0.25)' : 'rgba(255,255,255,0.05)',
+                    opacity: 1
+                  }}
+                >
+                  {t('nav.quickSaveSession')}
+                </button>
+                <button
+                  onClick={() => setShowExportDialog(true)}
+                  style={{ backgroundColor: 'rgba(59,130,246,0.2)', color: '#60a5fa', borderColor: 'rgba(59,130,246,0.3)' }}
+                >
+                  💾
+                </button>
+              </>
+            ) : (
+              /* ── Desktop: full toolbar ──────────────────── */
+              <>
+                <button onClick={newDiagram}>{t('nav.newDiagram')}</button>
+                {serverStorageAvailable && (
+                  <button
+                    onClick={() => {
+                      return setShowDiagramManager(true);
+                    }}
+                    style={{ backgroundColor: 'rgba(59,130,246,0.2)', color: '#60a5fa', borderColor: 'rgba(59,130,246,0.3)' }}
+                  >
+                    🌐 {t('nav.serverStorage')}
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    return setShowSaveDialog(true);
+                  }}
+                >
+                  {t('nav.saveSessionOnly')}
+                </button>
+                <button
+                  onClick={() => {
+                    return setShowLoadDialog(true);
+                  }}
+                >
+                  {t('nav.loadSessionOnly')}
+                </button>
+                <button
+                  onClick={() => {
+                    return setShowExportDialog(true);
+                  }}
+                  style={{ backgroundColor: 'rgba(59,130,246,0.2)', color: '#60a5fa', borderColor: 'rgba(59,130,246,0.3)' }}
+                >
+                  💾 {t('nav.exportFile')}
+                </button>
+                <button
+                  onClick={() => {
+                    if (currentDiagram && hasUnsavedChanges) {
+                      saveDiagram();
+                    }
+                  }}
+                  disabled={!currentDiagram || !hasUnsavedChanges}
+                  style={{
+                    backgroundColor:
+                      currentDiagram && hasUnsavedChanges ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.03)',
+                    color: currentDiagram && hasUnsavedChanges ? '#fbbf24' : 'rgba(255,255,255,0.3)',
+                    borderColor: currentDiagram && hasUnsavedChanges ? 'rgba(250,204,21,0.25)' : 'rgba(255,255,255,0.05)',
+                    opacity: 1,
+                    cursor:
+                      currentDiagram && hasUnsavedChanges
+                        ? 'pointer'
+                        : 'not-allowed'
+                  }}
+                  title="Save to current session only"
+                >
+                  {t('nav.quickSaveSession')}
+                </button>
+              </>
             )}
-            <button
-              onClick={() => {
-                return setShowSaveDialog(true);
-              }}
-            >
-              {t('nav.saveSessionOnly')}
-            </button>
-            <button
-              onClick={() => {
-                return setShowLoadDialog(true);
-              }}
-            >
-              {t('nav.loadSessionOnly')}
-            </button>
-            <button
-              onClick={() => {
-                return setShowExportDialog(true);
-              }}
-              style={{ backgroundColor: '#007bff' }}
-            >
-              💾 {t('nav.exportFile')}
-            </button>
-            <button
-              onClick={() => {
-                if (currentDiagram && hasUnsavedChanges) {
-                  saveDiagram();
-                }
-              }}
-              disabled={!currentDiagram || !hasUnsavedChanges}
-              style={{
-                backgroundColor:
-                  currentDiagram && hasUnsavedChanges ? '#ffc107' : '#6c757d',
-                opacity: currentDiagram && hasUnsavedChanges ? 1 : 0.5,
-                cursor:
-                  currentDiagram && hasUnsavedChanges
-                    ? 'pointer'
-                    : 'not-allowed'
-              }}
-              title="Save to current session only"
-            >
-              {t('nav.quickSaveSession')}
-            </button>
           </>
         )}
         {isReadonlyUrl && (
           <div
             style={{
-              color: 'black',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              border: '2px solid #000000'
+              color: '#f87171',
+              padding: '6px 14px',
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '13px',
+              border: '1px solid rgba(239,68,68,0.3)',
+              backgroundColor: 'rgba(239,68,68,0.1)'
             }}
           >
             {t('dialog.readOnly.mode')}
           </div>
         )}
-        <ChangeLanguage />
+        {!isMobile && <ChangeLanguage />}
         <span className="current-diagram">
           {isReadonlyUrl ? (
             <span>
@@ -776,12 +895,12 @@ function EditorPage() {
                 ? `${t('status.current')}: ${currentDiagram.name}`
                 : diagramName || t('status.untitled')}
               {hasUnsavedChanges && (
-                <span style={{ color: '#ff9800', marginLeft: '10px' }}>
+                <span style={{ color: '#fbbf24', marginLeft: '8px' }}>
                   • {t('status.modified')}
                 </span>
               )}
               <span
-                style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}
+                style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', marginLeft: '8px' }}
               >
                 ({t('status.sessionStorageNote')})
               </span>
@@ -816,14 +935,17 @@ function EditorPage() {
             <h2>{t('dialog.save.title')}</h2>
             <div
               style={{
-                backgroundColor: '#fff3cd',
-                border: '1px solid #ffeeba',
-                padding: '15px',
-                borderRadius: '4px',
-                marginBottom: '20px'
+                backgroundColor: 'rgba(250,204,21,0.08)',
+                border: '1px solid rgba(250,204,21,0.2)',
+                padding: '14px',
+                borderRadius: '10px',
+                marginBottom: '20px',
+                color: 'rgba(255,255,255,0.75)',
+                fontSize: '13px',
+                lineHeight: 1.5
               }}
             >
-              <strong>⚠️ {t('dialog.save.warningTitle')}:</strong>{' '}
+              <strong style={{ color: '#fbbf24' }}>⚠️ {t('dialog.save.warningTitle')}:</strong>{' '}
               {t('dialog.save.warningMessage')}
               <br />
               <span
@@ -865,14 +987,17 @@ function EditorPage() {
             <h2>{t('dialog.load.title')}</h2>
             <div
               style={{
-                backgroundColor: '#fff3cd',
-                border: '1px solid #ffeeba',
-                padding: '15px',
-                borderRadius: '4px',
-                marginBottom: '20px'
+                backgroundColor: 'rgba(250,204,21,0.08)',
+                border: '1px solid rgba(250,204,21,0.2)',
+                padding: '14px',
+                borderRadius: '10px',
+                marginBottom: '20px',
+                color: 'rgba(255,255,255,0.75)',
+                fontSize: '13px',
+                lineHeight: 1.5
               }}
             >
-              <strong>⚠️ {t('dialog.load.noteTitle')}:</strong>{' '}
+              <strong style={{ color: '#fbbf24' }}>⚠️ {t('dialog.load.noteTitle')}:</strong>{' '}
               {t('dialog.load.noteMessage')}
             </div>
             <div className="diagram-list">
@@ -931,18 +1056,21 @@ function EditorPage() {
             <h2>{t('dialog.export.title')}</h2>
             <div
               style={{
-                backgroundColor: '#d4edda',
-                border: '1px solid #c3e6cb',
-                padding: '15px',
-                borderRadius: '8px',
-                marginBottom: '20px'
+                backgroundColor: 'rgba(34,197,94,0.08)',
+                border: '1px solid rgba(34,197,94,0.2)',
+                padding: '14px',
+                borderRadius: '10px',
+                marginBottom: '20px',
+                color: 'rgba(255,255,255,0.75)',
+                fontSize: '13px',
+                lineHeight: 1.5
               }}
             >
-              <p style={{ margin: '0 0 10px 0' }}>
-                <strong>✅ {t('dialog.export.recommendedTitle')}:</strong>{' '}
+              <p style={{ margin: '0 0 8px 0' }}>
+                <strong style={{ color: '#4ade80' }}>✅ {t('dialog.export.recommendedTitle')}:</strong>{' '}
                 {t('dialog.export.recommendedMessage')}
               </p>
-              <p style={{ margin: 0, fontSize: '14px', color: '#155724' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
                 {t('dialog.export.noteMessage')}
               </p>
             </div>

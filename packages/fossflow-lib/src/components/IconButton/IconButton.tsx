@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Button, Box, useTheme } from '@mui/material';
+import { Button, Box, useTheme, useMediaQuery } from '@mui/material';
 import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
 
 interface Props {
@@ -20,39 +20,62 @@ export const IconButton = ({
   tooltipPosition = 'bottom'
 }: Props) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery('(max-width:768px)');
+
+  // Mobile: 44px minimum touch target (WCAG), Desktop: theme default (38px)
+  const buttonSize = isMobile ? 44 : theme.customVars.toolMenu.height;
+  const iconSize = isMobile ? 22 : 18;
+
   const iconColor = useMemo(() => {
-    if (isActive) {
-      return 'grey.200';
-    }
-
     if (disabled) {
-      return 'grey.800';
+      return 'rgba(255,255,255,0.2)';
     }
 
-    return 'grey.500';
-  }, [disabled, isActive]);
+    if (isActive) {
+      return theme.palette.primary.main;
+    }
+
+    return 'rgba(255,255,255,0.56)';
+  }, [disabled, isActive, theme]);
 
   return (
     <Tooltip
-      title={name}
+      title={isMobile ? '' : name}
       placement={tooltipPosition}
-      enterDelay={1000}
-      enterNextDelay={1000}
+      enterDelay={600}
+      enterNextDelay={400}
       arrow
-      sx={{ bgcolor: 'primary.main' }}
     >
       <Button
         variant="text"
         onClick={onClick}
+        disabled={disabled}
         sx={{
-          borderRadius: 0,
-          height: theme.customVars.toolMenu.height,
-          width: theme.customVars.toolMenu.height,
+          borderRadius: isMobile ? 2 : 1.5,
+          height: buttonSize,
+          width: buttonSize,
           maxWidth: '100%',
           minWidth: 'auto',
-          bgcolor: isActive ? 'primary.light' : undefined,
+          bgcolor: isActive ? 'rgba(59,130,246,0.14)' : 'transparent',
           p: 0,
-          m: 0
+          m: 0,
+          transition: 'all 0.15s ease',
+          // Larger active indicator on mobile
+          ...(isMobile && isActive && {
+            bgcolor: 'rgba(59,130,246,0.2)',
+            boxShadow: 'inset 0 -2px 0 0 #3b82f6'
+          }),
+          '&:hover': {
+            bgcolor: isActive
+              ? 'rgba(59,130,246,0.2)'
+              : 'rgba(255,255,255,0.06)'
+          },
+          '&:active': {
+            bgcolor: 'rgba(255,255,255,0.1)'
+          },
+          '&.Mui-disabled': {
+            opacity: 0.4
+          }
         }}
       >
         <Box
@@ -61,7 +84,10 @@ export const IconButton = ({
             justifyContent: 'center',
             alignItems: 'center',
             svg: {
-              color: iconColor
+              color: iconColor,
+              transition: 'color 0.15s ease',
+              width: iconSize,
+              height: iconSize
             }
           }}
         >
