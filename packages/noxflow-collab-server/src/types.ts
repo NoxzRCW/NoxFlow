@@ -48,6 +48,7 @@ export interface Room {
   name: string;
   createdAt: number;
   state: DiagramState;
+  fullState?: { model: unknown; scene: unknown };
   participants: Map<string, Participant>;
 }
 
