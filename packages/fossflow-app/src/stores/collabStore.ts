@@ -62,10 +62,8 @@ export const useCollabStore = create<CollabStore>((set, get) => ({
           ? state.cursors.map((c) => (c.id === cursor.id ? cursor : c))
           : [...state.cursors, cursor],
       })),
-    removeCursor: (id) =>
-      set((state) => ({
-        cursors: state.cursors.filter((c) => c.id !== id),
-      })),
+    setCursors: (cursors: RemoteCursor[]) => set({ cursors }),
+    clearCursors: () => set({ cursors: [] }),
     setMyUserName: (name) => set({ myUserName: name }),
     setMyColor: (color) => set({ myColor: color }),
   },

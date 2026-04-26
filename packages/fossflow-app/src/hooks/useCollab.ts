@@ -78,7 +78,7 @@ export function useCollab(roomId?: string) {
     });
 
     const unsubState = collabService.on('state-update', ({ senderId, state }: CollabStateUpdate) => {
-      if (!state) return;
+      if (!state || !modelStoreApi || !sceneStoreApi) return;
 
       isApplyingRemoteUpdate = true;
       try {
@@ -116,9 +116,9 @@ export function useCollab(roomId?: string) {
 
   // Subscribe to local store changes and broadcast them
   useEffect(() => {
-    if (!roomId || !isEnabled) return;
+    if (!roomId || !isEnabled || !modelStoreApi || !sceneStoreApi) return;
 
-    const unsubscribeModel = modelStoreApi.subscribe((state) => {
+    const unsubscribeModel = modelStoreApi.subscribe((state: any) => {
       if (isApplyingRemoteUpdate) return;
 
       const modelData = {
@@ -148,7 +148,7 @@ export function useCollab(roomId?: string) {
       collabService.broadcastState({ model: modelData, scene: sceneData });
     });
 
-    const unsubscribeScene = sceneStoreApi.subscribe((state) => {
+    const unsubscribeScene = sceneStoreApi.subscribe((state: any) => {
       if (isApplyingRemoteUpdate) return;
 
       const sceneData = {

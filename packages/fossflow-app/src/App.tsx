@@ -106,7 +106,7 @@ function EditorPage() {
 
   useEffect(() => {
     // Auto-enable collaboration when a room is set via URL or when a diagram is loaded
-    if (collabRoomId && !isReadonlyUrl) {
+    if (collabRoomId && !isReadonlyUrl && searchParams.get('collab')) {
       enableCollab();
     }
     return () => {
