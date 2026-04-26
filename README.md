@@ -1,141 +1,148 @@
-# 🔷 FossFLOW - Modern Isometric Diagramming
+# FossFLOW — Édition NoxzRCW
 
-<p align="center">
-  <img width="120" height="120" alt="FossFLOW Logo" src="https://github.com/user-attachments/assets/56d78887-601c-4336-ab87-76f8ee4cde96" />
-</p>
-
-<p align="center">
-  <b>A powerful, open-source Progressive Web App (PWA) for creating beautiful isometric network diagrams and infrastructure architectures.</b>
-</p>
-
-<p align="center">
-  <a href="#-features">Features</a> •
-  <a href="#-whats-new">What's New</a> •
-  <a href="#-quick-deploy">Deploy</a> •
-  <a href="#-local-development">Development</a> •
-  <a href="#-acknowledgements">Acknowledgements</a>
-</p>
+> **FossFLOW** est un outil open-source de création de diagrammes d'infrastructure en isométrie 3D. Cette version est une évolution visuelle et fonctionnelle du projet original, avec un focus sur l'expérience utilisateur moderne et la compatibilité mobile.
 
 ---
 
-## 📖 About FossFLOW
+## 🙏 Remerciements
 
-FossFLOW is designed for developers, network engineers, and system administrators who need to visualize their infrastructure clearly and beautifully. Built with React and the powerful [Isoflow](https://github.com/markmanx/isoflow) library, it runs entirely in your browser with full offline support.
+Cette version repose sur le travail exceptionnel de **Stan Smith** ([@stan-smith](https://github.com/stan-smith)), créateur original de [FossFLOW](https://github.com/stan-smith/FossFLOW), et sur la bibliothèque [Isoflow](https://github.com/markmanx/isoflow) de **Mark Moxon** ([@markmanx](https://github.com/markmanx)).
 
-Forget fighting with complex proprietary diagramming tools. Just drag, drop, and connect to create stunning isometric representations of your systems and networks.
+> *"I truly stand on the shoulders of a giant here 🫡"* — Stan Smith
 
-![Screenshot](https://github.com/user-attachments/assets/e7f254ad-625f-4b8a-8efc-5293b5be9d55)
-
-## ✨ Features
-
-- 🖥️ **Progressive Web App (PWA)**: Works completely offline right in your browser.
-- 🎨 **Isometric Graphics**: Beautiful, consistent 3D-like visuals for your architectures.
-- 💾 **Storage Options**: Save directly to your browser session, or export/import JSON files.
-- ⚡ **Lightweight & Fast**: Highly optimized React frontend ensuring a responsive, snappy experience.
-- 📦 **Docker Ready**: Quick and easy self-hosted deployments securely isolated in containers.
-
-### 🌟 What's New? (Latest Evolutions)
-* **Advanced Inventory Management**: Nodes now support detailed inventory fields, including **IP Address, Hostname, and OS**, allowing for comprehensive infrastructure tracking right from your diagrams.
-* **Streamlined Local Docker Build**: The `compose.yml` has been updated to build efficiently and directly from the local repository, making self-hosting smoother than ever.
-* **Modernized Core**: Fully upgraded to the latest React ecosystem (including React Router DOM v7+) for better performance, modern standards, and rock-solid stability.
+Toute la logique de diagrammation isométrique, le moteur de rendu et l'architecture de base sont leur œuvre. Cette fork se concentre sur l'amélioration de l'interface et l'accessibilité mobile.
 
 ---
 
-## 🐳 Quick Deploy (Docker)
+## ✨ Nouveautés de cette version
 
-The fastest and most reliable way to get your own instance of FossFLOW running is via Docker. Server storage is enabled by default, saving your diagrams securely to `./diagrams` on your host machine.
+### 🎨 Refonte UI — Dark Mode & Glassmorphism
+
+- **Thème sombre complet** avec palette bleu/violet inspirée de Vercel et Linear
+- **Effet glassmorphism** sur les panneaux flottants (éléments UI, dialogues, menus)
+- **Typographie Inter** avec échelle de tailles affinée
+- **Scrollbars sombres personnalisées**, couleurs de sélection, et animations subtiles
+- **Correction des couleurs hardcodées** en mode clair dans tous les composants
+
+### 📱 Responsive Mobile & Touch
+
+- **Compatibilité complète mobile** — fonctionne sur téléphone et tablette tactile
+- **Navigation bottom** sur mobile avec menu hamburger en bottom sheet
+- **Pinch-to-zoom** et pan à deux doigts sur le canvas
+- **Touch targets** de 44px minimum (conforme WCAG)
+- **ToolMenu intelligent** — outils essentiels visibles, overflow menu pour les avancés
+- **Dialogues convertis en bottom sheets** sur mobile (glisser vers le haut)
+- **Désactivation du pull-to-refresh** et du bounce overscroll
+
+### 🎬 Animations de Flux Réseau
+
+- **Animation des connecteurs** — traits animés simulant le transfert de données
+- **Effet glow pulsant** sur les lignes de connexion
+- **Flèches de direction** avec pulse doux indiquant le flux actif
+- **Animation flottante** des nœuds (mouvement vertical subtil)
+- **Effet hover** — scale + ombre portée sur les nœuds
+- **Respiration des rectangles** — pulse d'opacité sur les zones
+
+### 🐛 Corrections de Bugs
+
+- **Panning tactile erratique** — correction des sauts de coordonnées massifs qui jetaient la vue hors limites
+- **TouchEnd envoyant (0,0)** — forwarding des coordonnées `lastSingleTouch` au lieu de zéro
+- **isEmptyArea stale** — lecture dynamique depuis `uiStateApi` au lieu d'une référence obsolète
+
+---
+
+## 🚀 Installation
+
+### Prérequis
+
+- Node.js 18+
+- npm ou yarn
+
+### Développement local
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/FossFLOW.git
+# Cloner le repo
+git clone https://github.com/NoxzRCW/FossFLOW.git
 cd FossFLOW
 
-# Build and run using Docker Compose (Recommended)
-docker compose up -d --build
-```
-
-### Advanced Docker Usage
-
-**Disable Server Storage:**
-To run without persisting files to the local host directory:
-```bash
-docker run -p 80:80 -e ENABLE_SERVER_STORAGE=false fossflow-local
-```
-
-**Enable Basic Authentication:**
-Protect your diagrams by setting up HTTP Basic Auth:
-```bash
-# With Compose
-HTTP_AUTH_USER=admin HTTP_AUTH_PASSWORD=secret docker compose up
-
-# With run
-docker run -p 80:80 -e HTTP_AUTH_USER=admin -e HTTP_AUTH_PASSWORD=secret fossflow-local
-```
-*(Note: Both variables must be set to enable authentication)*
-
----
-
-## 🛠️ Local Development
-
-FossFLOW is structured as a monorepo containing the component library (`fossflow-lib`) and the web application (`fossflow-app`).
-
-### Prerequisites
-- Node.js (v18+)
-- npm
-
-### Setup & Run
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/FossFLOW.git
-cd FossFLOW
-
-# Install all dependencies across the monorepo
+# Installer les dépendances
 npm install
 
-# Build the library (required for first-time setup only)
+# Builder la librairie (nécessaire la première fois)
 npm run build:lib
 
-# Start the development server
+# Lancer le serveur de développement
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to see your app running locally.
 
-### Useful Commands
-| Command | Description |
-|---|---|
-| `npm run dev` | Start app development server |
-| `npm run dev:lib` | Watch mode for library development |
-| `npm run build` | Build both library and app |
-| `npm test` | Run unit tests |
-| `npm run lint` | Check for linting errors |
-| `./run-tests.sh` | Run E2E tests in the `e2e-tests` folder (requires Docker/Python) |
+Ouvrir http://localhost:3000 dans le navigateur.
 
----
+### Docker
 
-## 📚 How to Use
+```bash
+# Docker Compose (recommandé — persistance incluse)
+docker compose up
 
-1. **Add Nodes**: Click the **"+"** button on the top right to open the component library. Drag and drop any items onto exactly where you want them on the canvas.
-2. **Connect Infrastructure**: Press **'C'** (or click the connector icon) to select the Connector tool. Click your first node, then the second node to link them.
-3. **Manage Inventory**: Double click on a node to add useful metadata like *IP Address*, *Hostname*, and *Operating System*.
-4. **Export Your Work**: Save your architecture locally or export it as a JSON file to share with your team.
+# Ou Docker Hub directement
+docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/fossflow:latest
+```
 
 ---
 
-## 🤝 Contributing
+## 🏗️ Structure du Projet
 
-We welcome contributions! Whether it's adding new components, fixing bugs, or improving documentation, check out our [Contributing Guidelines](CONTRIBUTING.md) to get started on your first PR.
+Monorepo contenant deux packages :
 
-For a deeper dive into how the application is built and architected, read the [FossFLOW Encyclopedia](FOSSFLOW_ENCYCLOPEDIA.md).
+- **`packages/fossflow-lib`** — Librairie React de diagrammation réseau (Webpack)
+- **`packages/fossflow-app`** — PWA qui encapsule la lib (RSBuild)
+
+### Commandes de développement
+
+```bash
+npm run dev          # Serveur de dev app
+npm run dev:lib      # Watch mode lib
+npm run build        # Build lib + app
+npm run build:lib    # Build lib uniquement
+npm run build:app    # Build app uniquement
+npm test             # Tests unitaires
+npm run lint         # Linting
+```
 
 ---
 
-## 🙏 Acknowledgements
+## 📝 Changelog
 
-FossFLOW wouldn't be possible without the open-source community. A huge thanks to:
-* [@markmanx](https://github.com/markmanx) for creating the core [Isoflow](https://github.com/markmanx/isoflow) drawing library.
-* [@stan-smith](https://github.com/stan-smith) for earlier versions and foundation of this project.
+### v2.1.0-noxz (2026-03-29)
 
-## 📄 License
+- ✅ Dark mode + glassmorphism
+- ✅ Responsive mobile complet
+- ✅ Animations de flux réseau
+- ✅ Correction bugs tactiles
+- ✅ README modernisé
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
+
+## 🤝 Contribuer
+
+Les contributions sont les bienvenues ! Voir [CONTRIBUTORS.md](CONTRIBUTORS.md) du projet original pour les guidelines.
+
+---
+
+## 📜 Licence
+
+MIT — comme le projet original.
+
+---
+
+## 🔗 Liens
+
+- **Version originale** : [stan-smith/FossFLOW](https://github.com/stan-smith/FossFLOW)
+- **Démo originale** : [stan-smith.github.io/FossFLOW](https://stan-smith.github.io/FossFLOW/)
+- **Librairie Isoflow** : [markmanx/isoflow](https://github.com/markmanx/isoflow)
+- **Cette version** : [NoxzRCW/FossFLOW](https://github.com/NoxzRCW/FossFLOW)
+
+---
+
+<p align="center">
+  <i>Fork maintenu avec ❤️ par <a href="https://github.com/NoxzRCW">NoxzRCW</a></i>
+</p>
