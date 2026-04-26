@@ -19,7 +19,8 @@ import {
   Slider,
   Select,
   MenuItem,
-  FormControl
+  FormControl,
+  TextField
 } from '@mui/material';
 import { useModelStore } from 'src/stores/modelStore';
 import {
@@ -406,6 +407,8 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
     }
   }, [exportImage, imageData]);
 
+  const [customFilename, setCustomFilename] = useState<string>('');
+
   const downloadFile = useCallback(() => {
     const dataToDownload = croppedImageData || imageData;
     if (!dataToDownload) return;
@@ -415,8 +418,8 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
       'image/png;charset=utf-8'
     );
 
-    downloadFileUtil(data, generateGenericFilename('png'));
-  }, [imageData, croppedImageData]);
+    downloadFileUtil(data, generateGenericFilename('png', customFilename || undefined));
+  }, [imageData, croppedImageData, customFilename]);
 
   const downloadSvgFile = useCallback(async () => {
     if (!svgData) return;
@@ -425,18 +428,18 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
       // Fetch the data URL as a blob to handle encoding properly
       const response = await fetch(svgData);
       const blob = await response.blob();
-      downloadFileUtil(blob, generateGenericFilename('svg'));
+      downloadFileUtil(blob, generateGenericFilename('svg', customFilename || undefined));
     } catch (error) {
       console.error('SVG download failed:', error);
       setExportError(true);
     }
-  }, [svgData]);
+  }, [svgData, customFilename]);
 
   const displayImage = croppedImageData || imageData;
 
   return (
     <Dialog open onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Export as image</DialogTitle>
+      <DialogTitle>Exporter en image</DialogTitle>
       <DialogContent>
         <Stack spacing={2}>
           <Alert severity="info">
@@ -616,6 +619,16 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                 />
 
                 <Box sx={{ mt: 2, mb: 1 }}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Nom du fichier (optionnel)"
+                    placeholder="noxflow-export"
+                    value={customFilename}
+                    onChange={(e) => setCustomFilename(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+
                   <Typography variant="caption" component="div" sx={{ mb: 1 }}>
                     Export Quality (DPI)
                   </Typography>

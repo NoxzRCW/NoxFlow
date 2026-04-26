@@ -3,8 +3,9 @@ import FileSaver from 'file-saver';
 import { Model, Size } from '../types';
 import { icons as availableIcons } from '../examples/initialData';
 
-export const generateGenericFilename = (extension: string) => {
-  return `fossflow-export-${new Date().toISOString()}.${extension}`;
+export const generateGenericFilename = (extension: string, customName?: string) => {
+  const baseName = customName || 'noxflow-export';
+  return `${baseName}-${new Date().toISOString()}.${extension}`;
 };
 
 export const base64ToBlob = (

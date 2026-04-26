@@ -7,6 +7,10 @@ export * from 'src/schemas';
 export type { IsoflowProps, InitialData } from 'src/types';
 export * from 'src/types/model';
 
+// Export store APIs for external integration (e.g. real-time collaboration)
+export { useModelStoreApi } from 'src/stores/modelStore';
+export { useSceneStoreApi } from 'src/stores/sceneStore';
+
 // Export i18n locales
 export { default as enUS } from 'src/i18n/en-US';
 export { default as zhCN } from 'src/i18n/zh-CN';

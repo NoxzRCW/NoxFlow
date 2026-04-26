@@ -14,8 +14,11 @@ import { storageManager } from './services/storageService';
 import ChangeLanguage from './components/ChangeLanguage';
 import { allLocales } from 'fossflow';
 import { useIconPackManager, IconPackName } from './services/iconPackManager';
+import { collabService } from './services/collabService';
+import { useCollab } from './hooks/useCollab';
+import { RemoteCursors, ParticipantsPanel, ShareButton } from './components/Collaboration';
 import './App.css';
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useParams, useSearchParams } from 'react-router-dom';
 
 // Hook to detect mobile viewport
 function useIsMobile(breakpoint = 768) {
@@ -55,6 +58,7 @@ function App() {
     <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<EditorPage />} />
+        <Route path="/collab/:roomId" element={<EditorPage />} />
         <Route path="/display/:readonlyDiagramId" element={<EditorPage />} />
       </Routes>
     </BrowserRouter>
@@ -85,6 +89,47 @@ function EditorPage() {
   const isReadonlyUrl =
     window.location.pathname.startsWith('/display/') && readonlyDiagramId;
 
+  // ── Real-time Collaboration ────────────────────────────
+  const [searchParams] = useSearchParams();
+  const collabRoomId = searchParams.get('collab') || currentDiagram?.id || `room_${Date.now()}`;
+  const {
+    sendCursorPosition,
+    enableCollab,
+    disableCollab,
+    isEnabled: isCollabEnabled,
+    isConnected: isCollabConnected,
+    participants,
+  } = useCollab(collabRoomId);
+
+  // Generate user name once
+  const collabUserName = useRef(`User ${Math.floor(Math.random() * 10000)}`).current;
+
+  useEffect(() => {
+    // Auto-enable collaboration when a room is set via URL or when a diagram is loaded
+    if (collabRoomId && !isReadonlyUrl) {
+      enableCollab();
+    }
+    return () => {
+      disableCollab();
+    };
+  }, [collabRoomId]);
+
+  // Track mouse position for cursor sharing
+  useEffect(() => {
+    if (!isCollabEnabled || !isCollabConnected) return;
+
+    const container = document.querySelector('.fossflow-container');
+    if (!container) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      sendCursorPosition(e.clientX - rect.left, e.clientY - rect.top);
+    };
+
+    container.addEventListener('mousemove', handleMouseMove);
+    return () => container.removeEventListener('mousemove', handleMouseMove);
+  }, [isCollabEnabled, isCollabConnected, sendCursorPosition]);
+
   // Initialize with empty diagram data
   // Create default colors for connectors
   const defaultColors = [
@@ -107,6 +152,7 @@ function EditorPage() {
           return icon.collection === 'imported';
         });
         const mergedIcons = [...coreIcons, ...importedIcons];
+
         return {
           ...data,
           icons: mergedIcons,
@@ -864,6 +910,8 @@ function EditorPage() {
                 >
                   {t('nav.quickSaveSession')}
                 </button>
+                {/* Collaboration Share Button */}
+                <ShareButton roomId={collabRoomId} />
               </>
             )}
           </>
@@ -909,7 +957,7 @@ function EditorPage() {
         </span>
       </div>
 
-      <div className="fossflow-container">
+      <div className="fossflow-container" style={{ position: 'relative' }}>
         <Isoflow
           key={`${fossflowKey}-${i18n.language}`}
           initialData={diagramData}
@@ -926,6 +974,13 @@ function EditorPage() {
             }
           }}
         />
+        {/* Collaboration overlays */}
+        {isCollabEnabled && (
+          <>
+            <RemoteCursors />
+            <ParticipantsPanel />
+          </>
+        )}
       </div>
 
       {/* Save Dialog */}

@@ -4,6 +4,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 // Load environment variables
 dotenv.config();
@@ -12,6 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const httpServer = createServer(app);
 const PORT = process.env.BACKEND_PORT || 3001;
 
 // Configuration from environment variables
@@ -23,12 +26,120 @@ const ENABLE_GIT_BACKUP = process.env.ENABLE_GIT_BACKUP === 'true';
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// ── Socket.io Real-time Collaboration ───────────────────────
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+// Map socket.id -> user info
+const users = new Map();
+
+io.on('connection', (socket) => {
+  console.log(`[collab] Client connected: ${socket.id}`);
+
+  // User joins a diagram room
+  socket.on('join-room', ({ roomId, user }) => {
+    if (!roomId) return;
+    
+    // Leave previous rooms
+    socket.rooms.forEach(room => {
+      if (room !== socket.id) socket.leave(room);
+    });
+    
+    socket.join(roomId);
+    users.set(socket.id, {
+      id: socket.id,
+      name: user?.name || `User ${socket.id.slice(0, 4)}`,
+      color: user?.color || generateUserColor(socket.id),
+      roomId
+    });
+
+    // Notify others in room
+    socket.to(roomId).emit('user-joined', {
+      id: socket.id,
+      ...users.get(socket.id)
+    });
+
+    // Send current participants to the new user
+    const participants = Array.from(users.values()).filter(
+      u => u.roomId === roomId && u.id !== socket.id
+    );
+    socket.emit('participants', participants);
+
+    console.log(`[collab] ${socket.id} joined room ${roomId}`);
+  });
+
+  // Cursor position update
+  socket.on('cursor-move', ({ roomId, position }) => {
+    const user = users.get(socket.id);
+    if (!user || !roomId) return;
+    
+    socket.to(roomId).emit('cursor-move', {
+      id: socket.id,
+      name: user.name,
+      color: user.color,
+      position
+    });
+  });
+
+  // State update (full model+scene broadcast)
+  socket.on('state-update', ({ roomId, state }) => {
+    const user = users.get(socket.id);
+    if (!user || !roomId) return;
+    
+    // Broadcast to others in room (excluding sender)
+    socket.to(roomId).emit('state-update', {
+      senderId: socket.id,
+      senderName: user.name,
+      state
+    });
+  });
+
+  // User info update
+  socket.on('user-info', ({ name }) => {
+    const user = users.get(socket.id);
+    if (user) {
+      user.name = name || user.name;
+      if (user.roomId) {
+        socket.to(user.roomId).emit('user-updated', user);
+      }
+    }
+  });
+
+  // Disconnect
+  socket.on('disconnect', () => {
+    const user = users.get(socket.id);
+    if (user?.roomId) {
+      socket.to(user.roomId).emit('user-left', { id: socket.id });
+    }
+    users.delete(socket.id);
+    console.log(`[collab] Client disconnected: ${socket.id}`);
+  });
+});
+
+function generateUserColor(seed) {
+  const colors = [
+    '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981',
+    '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef',
+    '#f43f5e', '#14b8a6', '#fbbf24', '#a855f7'
+  ];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+}
+
 // Health check / Storage status endpoint
 app.get('/api/storage/status', (req, res) => {
   res.json({
     enabled: STORAGE_ENABLED,
     gitBackup: ENABLE_GIT_BACKUP,
-    version: '1.0.0'
+    version: '1.0.0',
+    collab: true
   });
 });
 
@@ -237,11 +348,12 @@ if (STORAGE_ENABLED) {
 }
 
 // Start server
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`FossFLOW Backend Server running on port ${PORT}`);
   console.log(`Server storage: ${STORAGE_ENABLED ? 'ENABLED' : 'DISABLED'}`);
   if (STORAGE_ENABLED) {
     console.log(`Storage path: ${STORAGE_PATH}`);
     console.log(`Git backup: ${ENABLE_GIT_BACKUP ? 'ENABLED' : 'DISABLED'}`);
   }
+  console.log(`Real-time collaboration: ENABLED (Socket.io)`);
 });
