@@ -81,6 +81,7 @@ const initialState = () => {
         // Capture the actual live state (not stale history.present)
         const currentScene = extractSceneData(state);
         return {
+          ...state,
           ...previous,
           history: {
             ...state.history,
@@ -105,6 +106,7 @@ const initialState = () => {
         // Capture the actual live state (not stale history.present)
         const currentScene = extractSceneData(state);
         return {
+          ...state,
           ...next,
           history: {
             ...state.history,

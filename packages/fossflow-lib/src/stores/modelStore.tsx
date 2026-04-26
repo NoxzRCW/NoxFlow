@@ -84,6 +84,7 @@ const initialState = () => {
         // Capture the actual live state (not stale history.present)
         const currentModel = extractModelData(state);
         return {
+          ...state,
           ...previous,
           history: {
             ...state.history,
@@ -108,6 +109,7 @@ const initialState = () => {
         // Capture the actual live state (not stale history.present)
         const currentModel = extractModelData(state);
         return {
+          ...state,
           ...next,
           history: {
             ...state.history,
