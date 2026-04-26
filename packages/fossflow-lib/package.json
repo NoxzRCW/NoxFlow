@@ -1,5 +1,5 @@
 {
-  "name": "fossflow",
+  "name": "noxflow",
   "version": "1.10.8",
   "private": false,
   "description": "An open-source React component for drawing network diagrams - forked from isoflow.",
