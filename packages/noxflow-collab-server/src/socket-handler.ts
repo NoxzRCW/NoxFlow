@@ -81,13 +81,13 @@ export function setupSocketHandlers(io: Server): void {
         }));
       socket.emit('participants', participants);
 
-      // Send current room state
-      const state = roomStore.getRoomState(roomId);
-      if (state) {
-        socket.emit('room-state', {
-          nodes: Array.from(state.nodes.values()),
-          connectors: Array.from(state.connectors.values()),
-          version: state.version,
+      // Send current full state to new joiner if available (from a previous state-update)
+      const fullState = roomStore.getFullState(roomId);
+      if (fullState) {
+        socket.emit('state-update', {
+          senderId: 'server',
+          senderName: 'Server',
+          state: fullState,
         });
       }
 
@@ -122,6 +122,25 @@ export function setupSocketHandlers(io: Server): void {
         color: participant.color,
         position,
         timestamp: Date.now(),
+      });
+    });
+
+    // ── State Update (full model+scene relay) ───────────────
+    socket.on('state-update', ({ roomId, state }: { roomId: string; state: { model: unknown; scene: unknown } }) => {
+      if (!roomId || !state) return;
+
+      const room = roomStore.getRoom(roomId);
+      if (!room) return;
+
+      const participant = room.participants.get(socket.id);
+      const senderName = participant?.name || 'Anonymous';
+
+      roomStore.setFullState(roomId, state.model, state.scene);
+
+      socket.to(roomId).emit('state-update', {
+        senderId: socket.id,
+        senderName,
+        state,
       });
     });
 

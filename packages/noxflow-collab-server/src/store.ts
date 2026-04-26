@@ -210,6 +210,23 @@ class RoomStore {
   }
 
   /**
+   * Store the latest full model+scene state (used by state-update relay)
+   */
+  setFullState(roomId: string, model: unknown, scene: unknown): void {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    room.fullState = { model, scene };
+    room.state.lastModified = Date.now();
+  }
+
+  /**
+   * Get the latest full model+scene state to send to new joiners
+   */
+  getFullState(roomId: string): { model: unknown; scene: unknown } | undefined {
+    return this.rooms.get(roomId)?.fullState;
+  }
+
+  /**
    * Clean up empty rooms older than maxAgeMs
    */
   cleanupEmptyRooms(maxAgeMs: number = 24 * 60 * 60 * 1000): number {

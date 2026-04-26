@@ -1,35 +1,27 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { collabService, RemoteCursor, CollabStateUpdate, CollabUser } from '../services/collabService';
 import { useCollabStore } from '../stores/collabStore';
 
-// We need to import from fossflow-lib to access stores
-// These are re-exported by the package - but they require providers
-// For collab, we use a lazy approach: get store APIs when available
 let isApplyingRemoteUpdate = false;
 let lastBroadcastedModel: any = null;
 let lastBroadcastedScene: any = null;
 
 export function useCollab(roomId?: string) {
-  const [modelStoreApi, setModelStoreApi] = useState<any>(null);
-  const [sceneStoreApi, setSceneStoreApi] = useState<any>(null);
+  // Use refs so listeners always read the latest store API without triggering reconnects
+  const modelStoreRef = useRef<any>(null);
+  const sceneStoreRef = useRef<any>(null);
   const collabActions = useCollabStore((state) => state.actions);
   const isEnabled = useCollabStore((state) => state.isEnabled);
   const myUserName = useCollabStore((state) => state.myUserName);
   const myColor = useCollabStore((state) => state.myColor);
-  const cleanupRef = useRef<(() => void)[]>([]);
 
-  // Lazy load store APIs when they become available
+  // Lazy load store APIs into refs (no state — avoids triggering reconnects)
   useEffect(() => {
     const checkStores = () => {
       try {
-        // Try to get stores from window if available
         const win = window as any;
-        if (win.__NOXFLOW_MODEL_STORE__) {
-          setModelStoreApi(win.__NOXFLOW_MODEL_STORE__);
-        }
-        if (win.__NOXFLOW_SCENE_STORE__) {
-          setSceneStoreApi(win.__NOXFLOW_SCENE_STORE__);
-        }
+        if (win.__NOXFLOW_MODEL_STORE__) modelStoreRef.current = win.__NOXFLOW_MODEL_STORE__;
+        if (win.__NOXFLOW_SCENE_STORE__) sceneStoreRef.current = win.__NOXFLOW_SCENE_STORE__;
       } catch (e) {
         // Stores not available yet
       }
@@ -52,7 +44,6 @@ export function useCollab(roomId?: string) {
     collabActions.setRoomId(roomId);
     collabActions.setConnected(collabService.isConnected());
 
-    // Listeners
     const unsubConnection = collabService.on('connection-change', ({ connected }: { connected: boolean }) => {
       collabActions.setConnected(connected);
     });
@@ -77,111 +68,113 @@ export function useCollab(roomId?: string) {
       collabActions.updateCursor(cursor);
     });
 
-    const unsubState = collabService.on('state-update', ({ senderId, state }: CollabStateUpdate) => {
+    // Refs are always current — no stale closure, no reconnect needed when stores load
+    const unsubState = collabService.on('state-update', ({ state }: CollabStateUpdate) => {
+      const modelStoreApi = modelStoreRef.current;
+      const sceneStoreApi = sceneStoreRef.current;
       if (!state || !modelStoreApi || !sceneStoreApi) return;
 
       isApplyingRemoteUpdate = true;
       try {
-        // Apply remote state to local stores (skip history)
-        if (state.model) {
-          modelStoreApi.getState().actions.set(state.model, true);
-        }
-        if (state.scene) {
-          sceneStoreApi.getState().actions.set(state.scene, true);
-        }
+        if (state.model) modelStoreApi.getState().actions.set(state.model, true);
+        if (state.scene) sceneStoreApi.getState().actions.set(state.scene, true);
       } finally {
-        // Use timeout to ensure zustand subscribers fire before unlocking
-        setTimeout(() => {
-          isApplyingRemoteUpdate = false;
-        }, 50);
+        setTimeout(() => { isApplyingRemoteUpdate = false; }, 50);
       }
     });
 
-    cleanupRef.current = [
-      unsubConnection,
-      unsubParticipants,
-      unsubJoined,
-      unsubLeft,
-      unsubUpdated,
-      unsubCursor,
-      unsubState,
-    ];
-
     return () => {
-      cleanupRef.current.forEach((fn) => fn());
-      cleanupRef.current = [];
+      unsubConnection();
+      unsubParticipants();
+      unsubJoined();
+      unsubLeft();
+      unsubUpdated();
+      unsubCursor();
+      unsubState();
       collabService.leaveRoom();
     };
-  }, [roomId, isEnabled, myUserName, myColor, collabActions, modelStoreApi, sceneStoreApi]);
+  }, [roomId, isEnabled, myUserName, myColor, collabActions]);
 
   // Subscribe to local store changes and broadcast them
   useEffect(() => {
-    if (!roomId || !isEnabled || !modelStoreApi || !sceneStoreApi) return;
+    if (!roomId || !isEnabled) return;
 
-    const unsubscribeModel = modelStoreApi.subscribe((state: any) => {
-      if (isApplyingRemoteUpdate) return;
+    // Wait until stores are available before subscribing
+    let unsubscribeModel: (() => void) | null = null;
+    let unsubscribeScene: (() => void) | null = null;
 
-      const modelData = {
-        version: state.version,
-        title: state.title,
-        description: state.description,
-        colors: state.colors,
-        icons: state.icons,
-        items: state.items,
-        views: state.views,
+    const setupSubscriptions = () => {
+      const modelStoreApi = modelStoreRef.current;
+      const sceneStoreApi = sceneStoreRef.current;
+      if (!modelStoreApi || !sceneStoreApi) return false;
+
+      unsubscribeModel = modelStoreApi.subscribe((state: any) => {
+        if (isApplyingRemoteUpdate) return;
+
+        const modelData = {
+          version: state.version,
+          title: state.title,
+          description: state.description,
+          colors: state.colors,
+          icons: state.icons,
+          items: state.items,
+          views: state.views,
+        };
+
+        const modelStr = JSON.stringify(modelData);
+        if (modelStr === JSON.stringify(lastBroadcastedModel)) return;
+        lastBroadcastedModel = modelData;
+
+        const sceneState = sceneStoreRef.current.getState();
+        const sceneData = { connectors: sceneState.connectors, textBoxes: sceneState.textBoxes };
+        lastBroadcastedScene = sceneData;
+
+        collabService.broadcastState({ model: modelData, scene: sceneData });
+      });
+
+      unsubscribeScene = sceneStoreApi.subscribe((state: any) => {
+        if (isApplyingRemoteUpdate) return;
+
+        const sceneData = { connectors: state.connectors, textBoxes: state.textBoxes };
+        const sceneStr = JSON.stringify(sceneData);
+        if (sceneStr === JSON.stringify(lastBroadcastedScene)) return;
+        lastBroadcastedScene = sceneData;
+
+        const modelState = modelStoreRef.current.getState();
+        const modelData = {
+          version: modelState.version,
+          title: modelState.title,
+          description: modelState.description,
+          colors: modelState.colors,
+          icons: modelState.icons,
+          items: modelState.items,
+          views: modelState.views,
+        };
+        lastBroadcastedModel = modelData;
+
+        collabService.broadcastState({ model: modelData, scene: sceneData });
+      });
+
+      return true;
+    };
+
+    if (!setupSubscriptions()) {
+      // Poll until stores are available
+      const interval = setInterval(() => {
+        if (setupSubscriptions()) clearInterval(interval);
+      }, 200);
+      return () => {
+        clearInterval(interval);
+        unsubscribeModel?.();
+        unsubscribeScene?.();
       };
-
-      // Debounce: only broadcast if meaningful change
-      const modelStr = JSON.stringify(modelData);
-      const lastStr = JSON.stringify(lastBroadcastedModel);
-      if (modelStr === lastStr) return;
-
-      lastBroadcastedModel = modelData;
-
-      const sceneState = sceneStoreApi.getState();
-      const sceneData = {
-        connectors: sceneState.connectors,
-        textBoxes: sceneState.textBoxes,
-      };
-      lastBroadcastedScene = sceneData;
-
-      collabService.broadcastState({ model: modelData, scene: sceneData });
-    });
-
-    const unsubscribeScene = sceneStoreApi.subscribe((state: any) => {
-      if (isApplyingRemoteUpdate) return;
-
-      const sceneData = {
-        connectors: state.connectors,
-        textBoxes: state.textBoxes,
-      };
-
-      const sceneStr = JSON.stringify(sceneData);
-      const lastStr = JSON.stringify(lastBroadcastedScene);
-      if (sceneStr === lastStr) return;
-
-      lastBroadcastedScene = sceneData;
-
-      const modelState = modelStoreApi.getState();
-      const modelData = {
-        version: modelState.version,
-        title: modelState.title,
-        description: modelState.description,
-        colors: modelState.colors,
-        icons: modelState.icons,
-        items: modelState.items,
-        views: modelState.views,
-      };
-      lastBroadcastedModel = modelData;
-
-      collabService.broadcastState({ model: modelData, scene: sceneData });
-    });
+    }
 
     return () => {
-      unsubscribeModel();
-      unsubscribeScene();
+      unsubscribeModel?.();
+      unsubscribeScene?.();
     };
-  }, [roomId, isEnabled, modelStoreApi, sceneStoreApi]);
+  }, [roomId, isEnabled]);
 
   // Send cursor position
   const sendCursorPosition = useCallback((x: number, y: number) => {
