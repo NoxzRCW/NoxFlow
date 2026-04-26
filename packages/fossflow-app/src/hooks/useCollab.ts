@@ -1,23 +1,44 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { collabService, RemoteCursor, CollabStateUpdate, CollabUser } from '../services/collabService';
 import { useCollabStore } from '../stores/collabStore';
 
 // We need to import from fossflow-lib to access stores
-// These are re-exported by the package
-import { useModelStoreApi, useSceneStoreApi } from 'fossflow';
-
+// These are re-exported by the package - but they require providers
+// For collab, we use a lazy approach: get store APIs when available
 let isApplyingRemoteUpdate = false;
 let lastBroadcastedModel: any = null;
 let lastBroadcastedScene: any = null;
 
 export function useCollab(roomId?: string) {
-  const modelStoreApi = useModelStoreApi();
-  const sceneStoreApi = useSceneStoreApi();
+  const [modelStoreApi, setModelStoreApi] = useState<any>(null);
+  const [sceneStoreApi, setSceneStoreApi] = useState<any>(null);
   const collabActions = useCollabStore((state) => state.actions);
   const isEnabled = useCollabStore((state) => state.isEnabled);
   const myUserName = useCollabStore((state) => state.myUserName);
   const myColor = useCollabStore((state) => state.myColor);
   const cleanupRef = useRef<(() => void)[]>([]);
+
+  // Lazy load store APIs when they become available
+  useEffect(() => {
+    const checkStores = () => {
+      try {
+        // Try to get stores from window if available
+        const win = window as any;
+        if (win.__NOXFLOW_MODEL_STORE__) {
+          setModelStoreApi(win.__NOXFLOW_MODEL_STORE__);
+        }
+        if (win.__NOXFLOW_SCENE_STORE__) {
+          setSceneStoreApi(win.__NOXFLOW_SCENE_STORE__);
+        }
+      } catch (e) {
+        // Stores not available yet
+      }
+    };
+
+    checkStores();
+    const interval = setInterval(checkStores, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize collaboration when roomId is provided
   useEffect(() => {
