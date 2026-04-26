@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Build the library first, then the app
-RUN npm run build:lib && npm run build:app
+RUN cd packages/fossflow-lib && npm run build && cd ../.. && cd packages/fossflow-app && npm run build
 
 # Use Node with nginx for production
 FROM node:22-alpine
