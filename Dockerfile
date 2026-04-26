@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY packages/fossflow-lib/package*.json ./packages/fossflow-lib/
 COPY packages/fossflow-app/package*.json ./packages/fossflow-app/
+COPY packages/noxflow-collab-server/package*.json ./packages/noxflow-collab-server/
 
 #Update NPM
 RUN npm install -g npm@11.5.2
@@ -18,8 +19,10 @@ RUN npm install
 # Copy the entire monorepo code
 COPY . .
 
-# Build the library first, then the app
-RUN cd packages/fossflow-lib && npm run build && cd ../.. && cd packages/fossflow-app && npm run build
+# Build the library, the app, and the collab server
+RUN cd packages/fossflow-lib && npm run build && \
+    cd ../fossflow-app && npm run build && \
+    cd ../noxflow-collab-server && npm run build
 
 # Use Node with nginx for production
 FROM node:22-alpine
@@ -29,6 +32,10 @@ RUN apk add --no-cache nginx openssl
 
 # Copy backend code
 COPY --from=build /app/packages/fossflow-backend /app/packages/fossflow-backend
+
+# Copy collab server (built dist + package files for runtime npm install)
+COPY --from=build /app/packages/noxflow-collab-server/dist /app/packages/noxflow-collab-server/dist
+COPY --from=build /app/packages/noxflow-collab-server/package*.json /app/packages/noxflow-collab-server/
 
 # Copy the built React app to Nginx's web server directory
 COPY --from=build /app/packages/fossflow-app/build /usr/share/nginx/html
