@@ -1,7 +1,7 @@
 {
   "name": "noxflow-backend",
   "version": "1.10.8",
-  "description": "Optional backend server for FossFLOW persistent storage",
+  "description": "Optional backend server for NoxFlow persistent storage",
   "main": "server.js",
   "type": "module",
   "scripts": {

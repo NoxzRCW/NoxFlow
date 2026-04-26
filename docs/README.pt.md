@@ -1,10 +1,10 @@
-# FossFLOW - Ferramenta de Diagramas Isométricos <img width="30" height="30" alt="fossflow" src="https://github.com/user-attachments/assets/56d78887-601c-4336-ab87-76f8ee4cde96" />
+# NoxFlow - Ferramenta de Diagramas Isométricos <img width="30" height="30" alt="noxflow" src="https://github.com/user-attachments/assets/56d78887-601c-4336-ab87-76f8ee4cde96" />
 
 <p align="center">
  <a href="../README.md">English</a> | <a href="README.cn.md">简体中文</a> | <a href="README.es.md">Español</a> | <a href="README.pt.md">Português</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.bn.md">বাংলা</a> | <a href="README.ru.md">Русский</a> | <a href="README.id.md">Bahasa Indonesia</a> | <a href="README.de.md">Deutsch</a>
 </p>
 
-<b>Olá!</b> Aqui é o Stan, se você usou o FossFLOW e ele te ajudou, <b>eu realmente agradeceria se você pudesse doar algo pequeno :)</b> Eu trabalho em tempo integral, e encontrar tempo para trabalhar neste projeto já é desafiador o suficiente.
+<b>Olá!</b> Aqui é o Stan, se você usou o NoxFlow e ele te ajudou, <b>eu realmente agradeceria se você pudesse doar algo pequeno :)</b> Eu trabalho em tempo integral, e encontrar tempo para trabalhar neste projeto já é desafiador o suficiente.
 Se eu implementei um recurso para você ou corrigi um bug, seria ótimo se você pudesse :) se não, não há problema, este software sempre será gratuito!
 
 
@@ -21,15 +21,15 @@ Obrigado,
 
 ## Experimente online
 
-Vá para  <b> --> https://stan-smith.github.io/FossFLOW/ <-- </b>
+Vá para  <b> --> https://NoxzRCW.github.io/NoxFlow/ <-- </b>
 
 
 ------------------------------------------------------------------------------------------------------------------------------
-FossFLOW é um poderoso Progressive Web App (PWA) de código aberto para criar belos diagramas isométricos. Construído com React e a biblioteca <a href="https://github.com/markmanx/isoflow">Isoflow</a> (Agora bifurcada e publicada no NPM como fossflow), ele roda inteiramente no seu navegador com suporte offline.
+NoxFlow é um poderoso Progressive Web App (PWA) de código aberto para criar belos diagramas isométricos. Construído com React e a biblioteca <a href="https://github.com/markmanx/isoflow">Isoflow</a> (Agora bifurcada e publicada no NPM como noxflow), ele roda inteiramente no seu navegador com suporte offline.
 
 ![Screenshot_20250630_160954](https://github.com/user-attachments/assets/e7f254ad-625f-4b8a-8efc-5293b5be9d55)
 
-- **🤝 [CONTRIBUTORS.md](https://github.com/stan-smith/FossFLOW/blob/master/CONTRIBUTORS.md)** - Como contribuir para o projeto.
+- **🤝 [CONTRIBUTORS.md](https://github.com/NoxzRCW/NoxFlow/blob/master/CONTRIBUTORS.md)** - Como contribuir para o projeto.
 
 ## Atualizações Recentes (Outubro 2025)
 
@@ -71,7 +71,7 @@ FossFLOW é um poderoso Progressive Web App (PWA) de código aberto para criar b
 ### Melhorias de Docker e CI/CD
 - **Builds Docker Automatizadas** - Fluxo de trabalho do GitHub Actions para implantação automática do Docker Hub em commits
 - **Suporte Multi-arquitetura** - Imagens Docker para `linux/amd64` e `linux/arm64`
-- **Imagens Pré-construídas** - Disponíveis em `stnsmith/fossflow:latest`
+- **Imagens Pré-construídas** - Disponíveis em `stnsmith/noxflow:latest`
 
 ### Arquitetura Monorepo
 - **Repositório único** para biblioteca e aplicação
@@ -103,22 +103,22 @@ FossFLOW é um poderoso Progressive Web App (PWA) de código aberto para criar b
 docker compose up
 
 # Ou execute diretamente do Docker Hub com armazenamento persistente
-docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/fossflow:latest
+docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/noxflow:latest
 ```
 
 O armazenamento no servidor está habilitado por padrão no Docker. Seus diagramas serão salvos em `./diagrams` no host.
 
 Para desabilitar o armazenamento no servidor, defina `ENABLE_SERVER_STORAGE=false`:
 ```bash
-docker run -p 80:80 -e ENABLE_SERVER_STORAGE=false stnsmith/fossflow:latest
+docker run -p 80:80 -e ENABLE_SERVER_STORAGE=false stnsmith/noxflow:latest
 ```
 
 ## Início Rápido (Desenvolvimento Local)
 
 ```bash
 # Clonar o repositório
-git clone https://github.com/stan-smith/FossFLOW
-cd FossFLOW
+git clone https://github.com/NoxzRCW/NoxFlow
+cd NoxFlow
 
 # Instalar dependências
 npm install
@@ -136,8 +136,8 @@ Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 Este é um monorepo contendo dois pacotes:
 
-- `packages/fossflow-lib` - Biblioteca de componentes React para desenhar diagramas de rede (construída com Webpack)
-- `packages/fossflow-app` - Progressive Web App para criar diagramas isométricos (construído com RSBuild)
+- `packages/noxflow-lib` - Biblioteca de componentes React para desenhar diagramas de rede (construída com Webpack)
+- `packages/noxflow-app` - Progressive Web App para criar diagramas isométricos (construído com RSBuild)
 
 ### Comandos de Desenvolvimento
 

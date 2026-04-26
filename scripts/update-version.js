@@ -20,9 +20,9 @@ console.log(`Updating all packages to version ${version}...`);
 // List of package.json files to update
 const packageFiles = [
   'package.json',
-  'packages/fossflow-lib/package.json',
-  'packages/fossflow-app/package.json',
-  'packages/fossflow-backend/package.json'
+  'packages/noxflow-lib/package.json',
+  'packages/noxflow-app/package.json',
+  'packages/noxflow-backend/package.json'
 ];
 
 packageFiles.forEach(file => {

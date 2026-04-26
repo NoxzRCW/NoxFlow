@@ -1,4 +1,4 @@
-import { Model } from 'fossflow/dist/types';
+import { Model } from 'noxflow/dist/types';
 
 export interface DiagramInfo {
   id: string;
@@ -146,8 +146,8 @@ class ServerStorage implements StorageService {
 
 // Session Storage Implementation (existing functionality)
 class SessionStorage implements StorageService {
-  private readonly KEY_PREFIX = 'fossflow_diagram_';
-  private readonly LIST_KEY = 'fossflow_diagrams';
+  private readonly KEY_PREFIX = 'noxflow_diagram_';
+  private readonly LIST_KEY = 'noxflow_diagrams';
 
   async isAvailable(): Promise<boolean> {
     return true; // Session storage is always available

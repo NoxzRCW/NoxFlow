@@ -1,4 +1,4 @@
-# FossFLOW Codebase Encyclopedia
+# NoxFlow Codebase Encyclopedia
 
 **Last Updated**: October 2025
 **Original Created**: August 14, 2025 (commit 94bf3c0)
@@ -8,14 +8,14 @@
 
 ## Overview
 
-FossFLOW is a monorepo containing both a React component library for drawing isometric network diagrams (fossflow-lib), a Progressive Web App that uses this library (fossflow-app), and an optional backend server for persistent storage (fossflow-backend). This encyclopedia provides a comprehensive guide to navigating and understanding the codebase structure, making it easy to locate specific functionality and understand the architecture.
+NoxFlow is a monorepo containing both a React component library for drawing isometric network diagrams (noxflow-lib), a Progressive Web App that uses this library (noxflow-app), and an optional backend server for persistent storage (noxflow-backend). This encyclopedia provides a comprehensive guide to navigating and understanding the codebase structure, making it easy to locate specific functionality and understand the architecture.
 
 ## Table of Contents
 
 1. [Monorepo Structure](#monorepo-structure)
-2. [Library Architecture (fossflow-lib)](#library-architecture-fossflow-lib)
-3. [Application Architecture (fossflow-app)](#application-architecture-fossflow-app)
-4. [Backend Architecture (fossflow-backend)](#backend-architecture-fossflow-backend) **[NEW]**
+2. [Library Architecture (noxflow-lib)](#library-architecture-noxflow-lib)
+3. [Application Architecture (noxflow-app)](#application-architecture-noxflow-app)
+4. [Backend Architecture (noxflow-backend)](#backend-architecture-noxflow-backend) **[NEW]**
 5. [State Management](#state-management)
 6. [Component Organization](#component-organization)
 7. [Configuration System](#configuration-system) **[NEW]**
@@ -28,9 +28,9 @@ FossFLOW is a monorepo containing both a React component library for drawing iso
 ## Monorepo Structure
 
 ```
-fossflow-monorepo/
+noxflow-monorepo/
 ├── packages/
-│   ├── fossflow-lib/            # React component library
+│   ├── noxflow-lib/            # React component library
 │   │   ├── src/                 # Library source code
 │   │   │   ├── Isoflow.tsx     # Main component entry
 │   │   │   ├── index.tsx       # Development entry
@@ -54,7 +54,7 @@ fossflow-monorepo/
 │   │   ├── package.json        # Library dependencies
 │   │   └── tsconfig.json       # TypeScript config
 │   │
-│   ├── fossflow-app/            # Progressive Web App
+│   ├── noxflow-app/            # Progressive Web App
 │   │   ├── src/                 # App source code
 │   │   │   ├── index.tsx       # App entry point
 │   │   │   ├── App.tsx         # Main app component
@@ -69,7 +69,7 @@ fossflow-monorepo/
 │   │   ├── package.json        # App dependencies
 │   │   └── tsconfig.json       # TypeScript config
 │   │
-│   └── fossflow-backend/        # Backend server (NEW - Added ~Aug 2025)
+│   └── noxflow-backend/        # Backend server (NEW - Added ~Aug 2025)
 │       ├── server.js           # Express server
 │       ├── package.json        # Backend dependencies
 │       └── .env.example        # Environment config template
@@ -82,13 +82,13 @@ fossflow-monorepo/
 └── FOSSFLOW_TODO.md            # Issues and roadmap
 ```
 
-## Library Architecture (fossflow-lib)
+## Library Architecture (noxflow-lib)
 
 ### Entry Points
 
-- **`packages/fossflow-lib/src/index.tsx`**: Development mode entry with examples
-- **`packages/fossflow-lib/src/Isoflow.tsx`**: Main component exported for library usage
-- **`packages/fossflow-lib/src/index-docker.tsx`**: Docker-specific entry point
+- **`packages/noxflow-lib/src/index.tsx`**: Development mode entry with examples
+- **`packages/noxflow-lib/src/Isoflow.tsx`**: Main component exported for library usage
+- **`packages/noxflow-lib/src/index-docker.tsx`**: Docker-specific entry point
 
 ### Provider Hierarchy
 
@@ -115,7 +115,7 @@ fossflow-monorepo/
 2. **Scene Data** → Connector paths, Connector labels, Text box sizes
 3. **UI State** → Zoom, Pan, Selection, Mode, Hotkey profile, Pan settings
 
-## Backend Architecture (fossflow-backend)
+## Backend Architecture (noxflow-backend)
 
 **Added**: August 2025 (commit bf3a30f)
 **Purpose**: Optional Express.js server for persistent diagram storage
@@ -124,7 +124,7 @@ fossflow-monorepo/
 
 The backend package provides server-side storage capabilities, allowing diagrams to persist across browser sessions and devices. It's particularly useful in Docker deployments.
 
-**Location**: `/packages/fossflow-backend/`
+**Location**: `/packages/noxflow-backend/`
 
 ### Key Files
 
@@ -186,7 +186,7 @@ Response: { success: boolean }
 
 ### Integration with App
 
-**App Service** (`packages/fossflow-app/src/services/storageService.ts`):
+**App Service** (`packages/noxflow-app/src/services/storageService.ts`):
 - Detects server availability on startup
 - Provides unified interface for server/local storage
 - Handles timeouts and error states
@@ -208,8 +208,8 @@ Response: { success: boolean }
 - Transaction system for atomic operations
 - Orphaned connector cleanup
 
-**Location**: `/packages/fossflow-lib/src/stores/modelStore.tsx`
-**Types**: `/packages/fossflow-lib/src/types/model.ts`
+**Location**: `/packages/noxflow-lib/src/stores/modelStore.tsx`
+**Types**: `/packages/noxflow-lib/src/types/model.ts`
 
 ### 2. SceneStore (`src/stores/sceneStore.tsx`)
 
@@ -225,8 +225,8 @@ Response: { success: boolean }
 - Undo/redo history tracking
 - Label migration from legacy format
 
-**Location**: `/packages/fossflow-lib/src/stores/sceneStore.tsx`
-**Types**: `/packages/fossflow-lib/src/types/scene.ts`
+**Location**: `/packages/noxflow-lib/src/stores/sceneStore.tsx`
+**Types**: `/packages/noxflow-lib/src/types/scene.ts`
 
 ### 3. UiStateStore (`src/stores/uiStateStore.tsx`)
 
@@ -248,25 +248,25 @@ Response: { success: boolean }
 - Connector creation mode toggle
 - i18n locale state
 
-**Location**: `/packages/fossflow-lib/src/stores/uiStateStore.tsx`
-**Types**: `/packages/fossflow-lib/src/types/ui.ts`
+**Location**: `/packages/noxflow-lib/src/stores/uiStateStore.tsx`
+**Types**: `/packages/noxflow-lib/src/types/ui.ts`
 
-## Application Architecture (fossflow-app)
+## Application Architecture (noxflow-app)
 
 ### Overview
 
-The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that provides a complete diagram editor interface using the fossflow-lib library.
+The NoxFlow application is a Progressive Web App (PWA) built with RSBuild that provides a complete diagram editor interface using the noxflow-lib library.
 
 ### Key Components
 
-#### App Entry (`packages/fossflow-app/src/index.tsx`)
+#### App Entry (`packages/noxflow-app/src/index.tsx`)
 - Initializes the React app
 - Registers service worker for PWA functionality
 - Sets up Quill editor styles
 - Initializes i18n (NEW)
 
-#### Main App (`packages/fossflow-app/src/App.tsx`)
-- Contains the Isoflow component from fossflow-lib
+#### Main App (`packages/noxflow-app/src/App.tsx`)
+- Contains the Isoflow component from noxflow-lib
 - Manages auto-save functionality
 - Handles import/export operations
 - Provides UI for session management
@@ -279,7 +279,7 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 - Enhanced diagram loading with icon persistence (commit 4e13033)
 
 #### Service Worker
-- **Location**: `packages/fossflow-app/src/serviceWorkerRegistration.ts`
+- **Location**: `packages/noxflow-app/src/serviceWorkerRegistration.ts`
 - Enables offline functionality
 - Caches app resources
 - Provides PWA installation capability
@@ -298,7 +298,7 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 
 ### Core Components (Library)
 
-#### Renderer (`packages/fossflow-lib/src/components/Renderer/`)
+#### Renderer (`packages/noxflow-lib/src/components/Renderer/`)
 - **Purpose**: Main canvas rendering
 - **Key Files**:
   - `Renderer.tsx`: Container component
@@ -316,7 +316,7 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 - **Key Files**:
   - `SceneLayer.tsx`: Transform container
 
-### Scene Layers (`packages/fossflow-lib/src/components/SceneLayers/`)
+### Scene Layers (`packages/noxflow-lib/src/components/SceneLayers/`)
 
 #### Nodes (`/Nodes/`)
 - **Purpose**: Render diagram nodes/icons
@@ -401,19 +401,19 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 
 ### UI Components (Library)
 
-#### MainMenu (`packages/fossflow-lib/src/components/MainMenu/`)
+#### MainMenu (`packages/noxflow-lib/src/components/MainMenu/`)
 - **Purpose**: Application menu
 - **Features**: Open, Export, Clear
 - **Updates**: i18n support (commit a001da7)
 
-#### ToolMenu (`packages/fossflow-lib/src/components/ToolMenu/`)
+#### ToolMenu (`packages/noxflow-lib/src/components/ToolMenu/`)
 - **Purpose**: Drawing tools palette
 - **Tools**: Select, Pan, Add Icon, Draw Rectangle, Add Text, Lasso (NEW), Freehand Lasso (NEW)
 - **Updates**:
   - Hotkey indicators (commit ef258df)
   - Visual profile badges for active hotkeys
 
-#### ItemControls (`packages/fossflow-lib/src/components/ItemControls/`)
+#### ItemControls (`packages/noxflow-lib/src/components/ItemControls/`)
 - **Purpose**: Property panels for selected items
 - **Subdirectories**:
   - `/NodeControls/`: Node properties
@@ -481,7 +481,7 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 - Replaced import toolbar
 - Guides users on icon import
 
-#### TransformControlsManager (`packages/fossflow-lib/src/components/TransformControlsManager/`)
+#### TransformControlsManager (`packages/noxflow-lib/src/components/TransformControlsManager/`)
 - **Purpose**: Selection and manipulation handles
 - **Key Files**:
   - `TransformAnchor.tsx`: Resize handles
@@ -516,7 +516,7 @@ The FossFLOW application is a Progressive Web App (PWA) built with RSBuild that 
 
 The configuration system provides type-safe, centralized settings for hotkeys, pan controls, and zoom behavior.
 
-**Location**: `/packages/fossflow-lib/src/config/`
+**Location**: `/packages/noxflow-lib/src/config/`
 
 ### Hotkey Configuration (`hotkeys.ts`)
 
@@ -574,9 +574,9 @@ type HotkeyProfile = 'qwerty' | 'smnrct' | 'none';
 
 ### Overview
 
-FossFLOW supports multiple languages using react-i18next with automatic language detection.
+NoxFlow supports multiple languages using react-i18next with automatic language detection.
 
-### Library i18n (`packages/fossflow-lib/src/i18n/`)
+### Library i18n (`packages/noxflow-lib/src/i18n/`)
 
 **Supported Languages**:
 - `en-US.ts`: English (default)
@@ -596,7 +596,7 @@ FossFLOW supports multiple languages using react-i18next with automatic language
 - `/src/stores/localeStore.tsx`: Locale state management
 - `/src/components/ChangeLanguage/`: Language switcher (app-level)
 
-### App i18n (`packages/fossflow-app/src/`)
+### App i18n (`packages/noxflow-app/src/`)
 
 **Configuration**: `i18n.ts`
 - Automatic language detection
@@ -657,19 +657,19 @@ FossFLOW supports multiple languages using react-i18next with automatic language
 ### Monorepo Build Architecture
 
 The project uses NPM workspaces to manage three packages:
-- **fossflow-lib**: Built with Webpack (CommonJS2 format)
-- **fossflow-app**: Built with RSBuild (modern bundler)
-- **fossflow-backend**: Node.js ES modules (no build step)
+- **noxflow-lib**: Built with Webpack (CommonJS2 format)
+- **noxflow-app**: Built with RSBuild (modern bundler)
+- **noxflow-backend**: Node.js ES modules (no build step)
 
 ### Build Configurations
 
 #### Library (Webpack)
-- **Config**: `/packages/fossflow-lib/webpack.config.js`
+- **Config**: `/packages/noxflow-lib/webpack.config.js`
 - **Output**: CommonJS2 module for npm publishing
 - **Externals**: React, React-DOM
 
 #### Application (RSBuild)
-- **Config**: `/packages/fossflow-app/rsbuild.config.ts`
+- **Config**: `/packages/noxflow-app/rsbuild.config.ts`
 - **Features**: Hot reload, PWA support, optimized production builds
 - **Output**: Static files in `build/` directory
 
@@ -719,9 +719,9 @@ RUN npm run build:lib && npm run build:app
 # Production stage with backend
 FROM node:22-alpine
 # Install backend dependencies
-COPY packages/fossflow-backend /app/backend
+COPY packages/noxflow-backend /app/backend
 # Copy built frontend
-COPY --from=build /app/packages/fossflow-app/build /app/frontend
+COPY --from=build /app/packages/noxflow-app/build /app/frontend
 # Start backend server serving frontend
 ```
 
@@ -733,15 +733,15 @@ COPY --from=build /app/packages/fossflow-app/build /app/frontend
 ## Testing Structure
 
 ### Test Files Location
-- Library tests: `packages/fossflow-lib/src/**/__tests__/`
-- App tests: `packages/fossflow-app/src/**/*.test.tsx`
-- Test utilities: `packages/fossflow-lib/src/fixtures/`
+- Library tests: `packages/noxflow-lib/src/**/__tests__/`
+- App tests: `packages/noxflow-app/src/**/*.test.tsx`
+- Test utilities: `packages/noxflow-lib/src/fixtures/`
 
 ### Key Test Areas
-- `/packages/fossflow-lib/src/schemas/__tests__/`: Schema validation (completed ✅)
-- `/packages/fossflow-lib/src/stores/reducers/__tests__/`: State logic
+- `/packages/noxflow-lib/src/schemas/__tests__/`: Schema validation (completed ✅)
+- `/packages/noxflow-lib/src/stores/reducers/__tests__/`: State logic
   - Connector reducer tests (commit 70b1f56)
-- `/packages/fossflow-lib/src/utils/__tests__/`: Utility functions
+- `/packages/noxflow-lib/src/utils/__tests__/`: Utility functions
 
 ### CI/CD Testing
 **Updates** (commits 70b1f56, 2bd1318):
@@ -755,8 +755,8 @@ COPY --from=build /app/packages/fossflow-app/build /app/frontend
 
 1. **Clone and Install**:
 ```bash
-git clone https://github.com/stan-smith/FossFLOW
-cd FossFLOW
+git clone https://github.com/NoxzRCW/NoxFlow
+cd NoxFlow
 npm install  # Installs dependencies for all workspaces
 ```
 
@@ -773,21 +773,21 @@ npm run dev:backend
 ```
 
 3. **Making Library Changes**:
-- Edit files in `packages/fossflow-lib/src/`
+- Edit files in `packages/noxflow-lib/src/`
 - Changes are immediately available in the app
 - No need to rebuild or republish during development
 
 4. **Making App Changes**:
-- Edit files in `packages/fossflow-app/src/`
+- Edit files in `packages/noxflow-app/src/`
 - Hot reload updates the browser automatically
 
 5. **Making Backend Changes** (NEW):
-- Edit `packages/fossflow-backend/server.js`
+- Edit `packages/noxflow-backend/server.js`
 - Restart server or use nodemon for auto-reload
 
 ### Key Development Files
 
-#### 1. Configuration (`packages/fossflow-lib/src/config.ts`)
+#### 1. Configuration (`packages/noxflow-lib/src/config.ts`)
 
 **Key Constants**:
 - `TILE_SIZE`: Base tile dimensions
@@ -795,7 +795,7 @@ npm run dev:backend
 - `DEFAULT_FONT_SIZE`: Text defaults
 - `INITIAL_DATA`: Default model state
 
-#### 2. Hooks Directory (`packages/fossflow-lib/src/hooks/`)
+#### 2. Hooks Directory (`packages/noxflow-lib/src/hooks/`)
 
 **Common Hooks**:
 - `useScene.ts`: Merged scene data
@@ -812,7 +812,7 @@ npm run dev:backend
 
 **Important**: All item access hooks now return `null` instead of throwing when items don't exist, preventing React unmount errors.
 
-#### 3. Interaction System (`packages/fossflow-lib/src/interaction/`)
+#### 3. Interaction System (`packages/noxflow-lib/src/interaction/`)
 
 **Main File**: `useInteractionManager.ts`
 
@@ -829,7 +829,7 @@ npm run dev:backend
 - `Lasso.ts`: Rectangle lasso selection **[NEW]**
 - `FreehandLasso.ts`: Freehand lasso selection **[NEW]**
 
-#### 4. Utilities (`packages/fossflow-lib/src/utils/`)
+#### 4. Utilities (`packages/noxflow-lib/src/utils/`)
 
 **Key Utilities**:
 - `CoordsUtils.ts`: Coordinate calculations
@@ -841,7 +841,7 @@ npm run dev:backend
 - `common.ts`: Common helpers
   - `getItemById`: Null-safe item access (prevents errors)
 
-#### 5. Type System (`packages/fossflow-lib/src/types/`)
+#### 5. Type System (`packages/noxflow-lib/src/types/`)
 
 **Core Types**:
 - `model.ts`: Business data types
@@ -853,7 +853,7 @@ npm run dev:backend
 - `interactions.ts`: Interaction types
 - `isoflowProps.ts`: Component prop types
 
-#### 6. Schema Validation (`packages/fossflow-lib/src/schemas/`)
+#### 6. Schema Validation (`packages/noxflow-lib/src/schemas/`)
 
 **Validation Schemas**:
 - `model.ts`: Model validation
@@ -877,7 +877,7 @@ The undo/redo system uses a transaction-based approach to ensure atomic operatio
 - **Dual Store Coordination**: Synchronizes model and scene stores
 - **History Tracking**: Maintains separate history for each store
 
-**Key File**: `/packages/fossflow-lib/src/hooks/useHistory.ts`
+**Key File**: `/packages/noxflow-lib/src/hooks/useHistory.ts`
 
 **API**:
 ```typescript
@@ -939,7 +939,7 @@ transaction(() => {
 **Selection handles?** → `/src/components/TransformControlsManager/`
 **Undo/Redo?** → `/src/hooks/useHistory.ts` **[NEW]**
 **i18n translations?** → `/src/i18n/en-US.ts`, `/src/i18n/zh-CN.ts` **[NEW]**
-**Server storage?** → `/packages/fossflow-backend/server.js` **[NEW]**
+**Server storage?** → `/packages/noxflow-backend/server.js` **[NEW]**
 **Pan settings?** → `/src/config/panSettings.ts` + `/src/components/PanSettings/` **[NEW]**
 **Tooltips?** → Various `/src/components/*Tooltip/` components **[NEW]**
 
@@ -954,7 +954,7 @@ transaction(() => {
 **How labels are positioned?** → `/src/utils/connectorLabels.ts` **[NEW]**
 **How transactions work?** → `/src/hooks/useHistory.ts` **[NEW]**
 **How i18n works?** → `/src/i18n/`, `/src/stores/localeStore.tsx` **[NEW]**
-**Backend API?** → `/packages/fossflow-backend/server.js` **[NEW]**
+**Backend API?** → `/packages/noxflow-backend/server.js` **[NEW]**
 
 ## Key Files Reference
 
@@ -977,8 +977,8 @@ transaction(() => {
 | Connector labels util | `/src/utils/connectorLabels.ts` | **[NEW]** |
 | History/Undo hook | `/src/hooks/useHistory.ts` | **[NEW]** |
 | Public API hook | `/src/hooks/useIsoflow.ts` | |
-| Backend server | `/packages/fossflow-backend/server.js` | **[NEW]** |
-| App i18n config | `/packages/fossflow-app/src/i18n.ts` | **[NEW]** |
+| Backend server | `/packages/noxflow-backend/server.js` | **[NEW]** |
+| App i18n config | `/packages/noxflow-app/src/i18n.ts` | **[NEW]** |
 | English translations | `/src/i18n/en-US.ts` | **[NEW]** |
 | Chinese translations | `/src/i18n/zh-CN.ts` | **[NEW]** |
 
@@ -1010,6 +1010,6 @@ transaction(() => {
 
 ---
 
-This encyclopedia serves as a comprehensive guide to the FossFLOW codebase. Use the table of contents and quick references to efficiently navigate to the areas you need to modify or understand.
+This encyclopedia serves as a comprehensive guide to the NoxFlow codebase. Use the table of contents and quick references to efficiently navigate to the areas you need to modify or understand.
 
 **For Contributors**: See [CONTRIBUTORS.md](./CONTRIBUTORS.md) for contribution guidelines and [FOSSFLOW_TODO.md](./FOSSFLOW_TODO.md) for current issues and roadmap.

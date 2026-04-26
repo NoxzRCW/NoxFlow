@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Isoflow } from 'fossflow';
+import { Isoflow } from 'noxflow';
 import { flattenCollections } from '@isoflow/isopacks/dist/utils';
 import isoflowIsopack from '@isoflow/isopacks/dist/isoflow';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import { StorageManager } from './StorageManager';
 import { DiagramManager } from './components/DiagramManager';
 import { storageManager } from './services/storageService';
 import ChangeLanguage from './components/ChangeLanguage';
-import { allLocales } from 'fossflow';
+import { allLocales } from 'noxflow';
 import { useIconPackManager, IconPackName } from './services/iconPackManager';
 import './App.css';
 
@@ -36,7 +36,7 @@ function EditorPage() {
   // Log warning if in display mode
   useEffect(() => {
     if (isReadonlyUrl) {
-      console.warn('FossFLOW is running in read-only display mode. Editing is disabled.');
+      console.warn('NoxFlow is running in read-only display mode. Editing is disabled.');
       console.log(`Viewing diagram: ${readonlyDiagramId}`);
     }
   }, [isReadonlyUrl, readonlyDiagramId]);
@@ -50,7 +50,7 @@ function EditorPage() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [fossflowKey, setFossflowKey] = useState(0); // Key to force re-render of FossFLOW
+  const [noxflowKey, setFossflowKey] = useState(0); // Key to force re-render of NoxFlow
   const [currentModel, setCurrentModel] = useState<DiagramData | null>(null); // Store current model state
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null);
@@ -139,7 +139,7 @@ function EditorPage() {
 
   // Load saved diagrams from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('fossflow_diagrams');
+    const saved = localStorage.getItem('noxflow_diagrams');
     if (saved) {
       try {
         const parsedDiagrams = JSON.parse(saved);
@@ -159,7 +159,7 @@ function EditorPage() {
           data: currentModel,
           updatedAt: new Date().toISOString()
         };
-        localStorage.setItem('fossflow_autosave', JSON.stringify(autoSaveData));
+        localStorage.setItem('noxflow_autosave', JSON.stringify(autoSaveData));
         setLastAutoSave(new Date());
         console.log('Auto-saved to localStorage');
       }
@@ -171,7 +171,7 @@ function EditorPage() {
   // Load auto-save on mount
   useEffect(() => {
     if (!isReadonlyUrl) {
-      const autoSaveData = localStorage.getItem('fossflow_autosave');
+      const autoSaveData = localStorage.getItem('noxflow_autosave');
       if (autoSaveData) {
         try {
           const parsed = JSON.parse(autoSaveData);
@@ -182,7 +182,7 @@ function EditorPage() {
             setDiagramName(parsed.name || '');
             setCurrentDiagram(parsed);
             setFossflowKey(prevKey => prevKey + 1);
-            localStorage.removeItem('fossflow_autosave'); // Clear auto-save after restoring
+            localStorage.removeItem('noxflow_autosave'); // Clear auto-save after restoring
           }
         } catch (error) {
           console.error('Failed to parse auto-save data:', error);
@@ -244,12 +244,12 @@ function EditorPage() {
       : [...diagrams, newDiagram];
 
     setDiagrams(updatedDiagrams);
-    localStorage.setItem('fossflow_diagrams', JSON.stringify(updatedDiagrams));
+    localStorage.setItem('noxflow_diagrams', JSON.stringify(updatedDiagrams));
     setCurrentDiagram(newDiagram);
     setShowSaveDialog(false);
     setHasUnsavedChanges(false);
     // Clear auto-save after successful save
-    localStorage.removeItem('fossflow_autosave');
+    localStorage.removeItem('noxflow_autosave');
   };
 
   const loadDiagram = (diagram: SavedDiagram) => {
@@ -260,14 +260,14 @@ function EditorPage() {
     setDiagramName(diagram.name);
     setShowLoadDialog(false);
     setHasUnsavedChanges(false);
-    setFossflowKey(prevKey => prevKey + 1); // Force re-render FossFLOW
+    setFossflowKey(prevKey => prevKey + 1); // Force re-render NoxFlow
   };
 
   const deleteDiagram = (id: string) => {
     if (window.confirm('Are you sure you want to delete this diagram?')) {
       const updatedDiagrams = diagrams.filter(d => d.id !== id);
       setDiagrams(updatedDiagrams);
-      localStorage.setItem('fossflow_diagrams', JSON.stringify(updatedDiagrams));
+      localStorage.setItem('noxflow_diagrams', JSON.stringify(updatedDiagrams));
 
       if (currentDiagram?.id === id) {
         setCurrentDiagram(null);
@@ -281,7 +281,7 @@ function EditorPage() {
     const savableData = extractSavableData(diagramToExport);
 
     const exportData = {
-      name: diagramName || 'fossflow-diagram',
+      name: diagramName || 'noxflow-diagram',
       version: '1.0',
       exportDate: new Date().toISOString(),
       data: savableData
@@ -291,7 +291,7 @@ function EditorPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${diagramName || 'fossflow-diagram'}-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `${diagramName || 'noxflow-diagram'}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
 
@@ -325,7 +325,7 @@ function EditorPage() {
         setCurrentModel(mergedData);
         setDiagramName(parsed.name || '');
         setHasUnsavedChanges(true);
-        setFossflowKey(prevKey => prevKey + 1); // Force re-render FossFLOW
+        setFossflowKey(prevKey => prevKey + 1); // Force re-render NoxFlow
 
         // Reset the file input
         if (fileInputRef.current) {
@@ -349,9 +349,9 @@ function EditorPage() {
     setCurrentDiagram(null);
     setDiagramName('');
     setHasUnsavedChanges(false);
-    setFossflowKey(prevKey => prevKey + 1); // Force re-render FossFLOW
+    setFossflowKey(prevKey => prevKey + 1); // Force re-render NoxFlow
     // Clear auto-save when creating new diagram
-    localStorage.removeItem('fossflow_autosave');
+    localStorage.removeItem('noxflow_autosave');
   };
 
   const handleDiagramManagerLoad = async (diagram: any) => {
@@ -437,7 +437,7 @@ function EditorPage() {
 
       <div className="main-content">
         <Isoflow
-          key={fossflowKey}
+          key={noxflowKey}
           initialData={diagramData}
           onModelUpdated={handleModelUpdated}
           editorMode={isReadonlyUrl ? 'EXPLORABLE_READONLY' : 'EDITABLE'}

@@ -1,12 +1,12 @@
-# FossFLOW - Isometric Diagramming Tool
+# NoxFlow - Isometric Diagramming Tool
 
-FossFLOW is a powerful, open-source Progressive Web App (PWA) for creating beautiful isometric diagrams. Built with React and the Isoflow (Now forked and published to NPM as fossflow) library, it runs entirely in your browser with offline support.
+NoxFlow is a powerful, open-source Progressive Web App (PWA) for creating beautiful isometric diagrams. Built with React and the Isoflow (Now forked and published to NPM as noxflow) library, it runs entirely in your browser with offline support.
 
 ![Screenshot_20250630_160954](https://github.com/user-attachments/assets/e7f254ad-625f-4b8a-8efc-5293b5be9d55)
 
 
 
-- **🤝 [CONTRIBUTORS.md](https://github.com/stan-smith/fossflow-lib/blob/main/CONTRIBUTORS.md)** - How to contribute to the project.
+- **🤝 [CONTRIBUTORS.md](https://github.com/NoxzRCW/noxflow-lib/blob/main/CONTRIBUTORS.md)** - How to contribute to the project.
 
 
 ## Features
@@ -22,15 +22,15 @@ FossFLOW is a powerful, open-source Progressive Web App (PWA) for creating beaut
 
 ## Try it online
 
-Go to https://stan-smith.github.io/FossFLOW/
+Go to https://NoxzRCW.github.io/NoxFlow/
 
 
 ## Quick start on local environment
 
 ```bash
 # Clone the repository
-git clone https://github.com/stan-smith/FossFLOW
-cd FossFLOW
+git clone https://github.com/NoxzRCW/NoxFlow
+cd NoxFlow
 
 # Make sure you have npm installed
 
@@ -153,7 +153,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 Isoflow is released under the MIT license.
 
-FossFLOW is released under the Unlicense license, do what you want with it.
+NoxFlow is released under the Unlicense license, do what you want with it.
 
 ## Acknowledgments
 

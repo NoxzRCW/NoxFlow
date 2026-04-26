@@ -35,7 +35,7 @@ export const GlobalStyles = () => {
         },
         /* Canvas area: prevent all browser touch gestures so our
            pinch-to-zoom and drag-and-drop work without conflict */
-        'canvas, [data-renderer], .fossflow-renderer': {
+        'canvas, [data-renderer], .noxflow-renderer': {
           touchAction: 'none',
           WebkitUserSelect: 'none',
           userSelect: 'none',

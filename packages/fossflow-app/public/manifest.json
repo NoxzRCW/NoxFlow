@@ -1,7 +1,7 @@
 {
-  "short_name": "FossFLOW",
-  "name": "FossFLOW - Isometric Diagramming Tool",
-  "description": "Create beautiful isometric diagrams with FossFLOW",
+  "short_name": "NoxFlow",
+  "name": "NoxFlow - Isometric Diagramming Tool",
+  "description": "Create beautiful isometric diagrams with NoxFlow",
   "icons": [
     {
       "src": "favicon.ico",

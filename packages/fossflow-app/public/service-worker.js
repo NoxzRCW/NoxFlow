@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fossflow-v1';
+const CACHE_NAME = 'noxflow-v1';
 
 // Get the base path from the service worker's location
 const swPath = self.location.pathname;

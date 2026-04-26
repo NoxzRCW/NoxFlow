@@ -3,7 +3,7 @@ import { Box, IconButton, Paper, Typography, useTheme } from '@mui/material';
 import { Close as CloseIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { useTranslation } from 'src/stores/localeStore';
 
-const STORAGE_KEY = 'fossflow-lazy-loading-welcome-dismissed';
+const STORAGE_KEY = 'noxflow-lazy-loading-welcome-dismissed';
 
 export const LazyLoadingWelcomeNotification = () => {
   const { t } = useTranslation('lazyLoadingWelcome');

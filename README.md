@@ -1,12 +1,12 @@
-# FossFLOW — Édition NoxzRCW
+# NoxFlow — Édition NoxzRCW
 
-> **FossFLOW** est un outil open-source de création de diagrammes d'infrastructure en isométrie 3D. Cette version est une évolution visuelle et fonctionnelle du projet original, avec un focus sur l'expérience utilisateur moderne et la compatibilité mobile.
+> **NoxFlow** est un outil open-source de création de diagrammes d'infrastructure en isométrie 3D. Cette version est une évolution visuelle et fonctionnelle du projet original, avec un focus sur l'expérience utilisateur moderne et la compatibilité mobile.
 
 ---
 
 ## 🙏 Remerciements
 
-Cette version repose sur le travail exceptionnel de **Stan Smith** ([@stan-smith](https://github.com/stan-smith)), créateur original de [FossFLOW](https://github.com/stan-smith/FossFLOW), et sur la bibliothèque [Isoflow](https://github.com/markmanx/isoflow) de **Mark Moxon** ([@markmanx](https://github.com/markmanx)).
+Cette version repose sur le travail exceptionnel de **Stan Smith** ([@NoxzRCW](https://github.com/NoxzRCW)), créateur original de [NoxFlow](https://github.com/NoxzRCW/NoxFlow), et sur la bibliothèque [Isoflow](https://github.com/markmanx/isoflow) de **Mark Moxon** ([@markmanx](https://github.com/markmanx)).
 
 > *"I truly stand on the shoulders of a giant here 🫡"* — Stan Smith
 
@@ -62,8 +62,8 @@ Toute la logique de diagrammation isométrique, le moteur de rendu et l'architec
 
 ```bash
 # Cloner le repo
-git clone https://github.com/NoxzRCW/FossFLOW.git
-cd FossFLOW
+git clone https://github.com/NoxzRCW/NoxFlow.git
+cd NoxFlow
 
 # Installer les dépendances
 npm install
@@ -84,7 +84,7 @@ Ouvrir http://localhost:3000 dans le navigateur.
 docker compose up
 
 # Ou Docker Hub directement
-docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/fossflow:latest
+docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/noxflow:latest
 ```
 
 ---
@@ -93,8 +93,8 @@ docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/fossflow:latest
 
 Monorepo contenant deux packages :
 
-- **`packages/fossflow-lib`** — Librairie React de diagrammation réseau (Webpack)
-- **`packages/fossflow-app`** — PWA qui encapsule la lib (RSBuild)
+- **`packages/noxflow-lib`** — Librairie React de diagrammation réseau (Webpack)
+- **`packages/noxflow-app`** — PWA qui encapsule la lib (RSBuild)
 
 ### Commandes de développement
 
@@ -136,10 +136,10 @@ MIT — comme le projet original.
 
 ## 🔗 Liens
 
-- **Version originale** : [stan-smith/FossFLOW](https://github.com/stan-smith/FossFLOW)
-- **Démo originale** : [stan-smith.github.io/FossFLOW](https://stan-smith.github.io/FossFLOW/)
+- **Version originale** : [NoxzRCW/NoxFlow](https://github.com/NoxzRCW/NoxFlow)
+- **Démo originale** : [NoxzRCW.github.io/NoxFlow](https://NoxzRCW.github.io/NoxFlow/)
 - **Librairie Isoflow** : [markmanx/isoflow](https://github.com/markmanx/isoflow)
-- **Cette version** : [NoxzRCW/FossFLOW](https://github.com/NoxzRCW/FossFLOW)
+- **Cette version** : [NoxzRCW/NoxFlow](https://github.com/NoxzRCW/NoxFlow)
 
 ---
 

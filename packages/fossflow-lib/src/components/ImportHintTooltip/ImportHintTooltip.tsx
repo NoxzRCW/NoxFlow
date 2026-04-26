@@ -3,7 +3,7 @@ import { Box, IconButton, Paper, Typography } from '@mui/material';
 import { Close as CloseIcon, FolderOpen as FolderOpenIcon } from '@mui/icons-material';
 import { useTranslation } from 'src/stores/localeStore';
 
-const STORAGE_KEY = 'fossflow_import_hint_dismissed';
+const STORAGE_KEY = 'noxflow_import_hint_dismissed';
 
 export const ImportHintTooltip = () => {
   const { t } = useTranslation('importHintTooltip');

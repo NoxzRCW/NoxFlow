@@ -1,10 +1,10 @@
 #!/bin/bash
-# Test FossFLOW deployment at different base paths
+# Test NoxFlow deployment at different base paths
 # This simulates how the app will be served on GitHub Pages or other platforms with subpaths
 
 set -e
 
-echo "Testing FossFLOW at multiple base paths..."
+echo "Testing NoxFlow at multiple base paths..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Base paths to test
-BASE_PATHS=("/" "/fossflow" "/apps/fossflow" "/my-org/projects/fossflow")
+BASE_PATHS=("/" "/noxflow" "/apps/noxflow" "/my-org/projects/noxflow")
 
 # Function to cleanup
 cleanup() {
@@ -93,7 +93,7 @@ EOF
     docker run -d \
         --name nginx-test \
         -p 3001:80 \
-        -v $(pwd)/packages/fossflow-app/build:/usr/share/nginx/html:ro \
+        -v $(pwd)/packages/noxflow-app/build:/usr/share/nginx/html:ro \
         -v /tmp/nginx.conf:/etc/nginx/nginx.conf:ro \
         nginx:alpine
 

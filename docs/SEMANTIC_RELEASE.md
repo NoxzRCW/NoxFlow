@@ -1,10 +1,10 @@
 # Semantic Release Setup
 
-This document explains how FossFLOW uses automated semantic versioning and releases.
+This document explains how NoxFlow uses automated semantic versioning and releases.
 
 ## Overview
 
-FossFLOW uses [semantic-release](https://github.com/semantic-release/semantic-release) to automate:
+NoxFlow uses [semantic-release](https://github.com/semantic-release/semantic-release) to automate:
 - Version number calculation based on commit messages
 - CHANGELOG.md generation
 - GitHub release creation
@@ -50,11 +50,11 @@ When you push to `master` branch:
 
 ### 3. Multiple Package Versioning
 
-FossFLOW is a monorepo with multiple packages. All packages are versioned together:
+NoxFlow is a monorepo with multiple packages. All packages are versioned together:
 - Root `package.json`
-- `packages/fossflow-lib/package.json`
-- `packages/fossflow-app/package.json`
-- `packages/fossflow-backend/package.json`
+- `packages/noxflow-lib/package.json`
+- `packages/noxflow-app/package.json`
+- `packages/noxflow-backend/package.json`
 
 The `scripts/update-version.js` script syncs version numbers across all packages.
 

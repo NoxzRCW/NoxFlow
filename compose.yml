@@ -1,5 +1,5 @@
 services:
-  fossflow:
+  noxflow:
     build : .
     ports:
       - 80:80

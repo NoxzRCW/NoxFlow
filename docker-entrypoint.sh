@@ -3,7 +3,7 @@
 # Start Node.js backend if server storage is enabled
 if [ "$ENABLE_SERVER_STORAGE" = "true" ]; then
     echo "Starting NoxFlow backend server..."
-    cd /app/packages/fossflow-backend
+    cd /app/packages/noxflow-backend
     npm install --production
     node server.js &
     echo "Backend server started"

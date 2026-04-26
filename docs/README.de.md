@@ -1,10 +1,10 @@
-# FossFLOW - Isometrisches Diagramm-Werkzeug <img width="30" height="30" alt="fossflow" src="https://github.com/user-attachments/assets/56d78887-601c-4336-ab87-76f8ee4cde96" />
+# NoxFlow - Isometrisches Diagramm-Werkzeug <img width="30" height="30" alt="noxflow" src="https://github.com/user-attachments/assets/56d78887-601c-4336-ab87-76f8ee4cde96" />
 
 <p align="center">
  <a href="../README.md">English</a> | <a href="README.cn.md">简体中文</a> | <a href="README.es.md">Español</a> | <a href="README.pt.md">Português</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.bn.md">বাংলা</a> | <a href="README.ru.md">Русский</a> | <a href="README.id.md">Bahasa Indonesia</a> | <a href="README.de.md">Deutsch</a>
 </p>
 
-<b>Hey!</b> Hier ist Stan. Wenn du FossFLOW benutzt hast und es dir geholfen hat, <b>würde ich mich sehr über eine kleine Spende freuen :)</b> Ich arbeite Vollzeit, und Zeit für dieses Projekt zu finden ist schon schwer genug.
+<b>Hey!</b> Hier ist Stan. Wenn du NoxFlow benutzt hast und es dir geholfen hat, <b>würde ich mich sehr über eine kleine Spende freuen :)</b> Ich arbeite Vollzeit, und Zeit für dieses Projekt zu finden ist schon schwer genug.
 Wenn ich ein Feature für dich implementiert oder einen Bug behoben habe, wäre es toll, wenn du etwas spenden könntest :) Falls nicht, ist das kein Problem – diese Software bleibt immer kostenlos!
 
 <b>Außerdem!</b> Falls noch nicht geschehen, schau dir bitte die zugrunde liegende Bibliothek an, auf der dies aufbaut, von <a href="https://github.com/markmanx/isoflow">@markmanx</a>. Ich stehe hier wirklich auf den Schultern eines Riesen 🫡
@@ -19,15 +19,15 @@ Danke,
 
 ## Online ausprobieren
 
-Gehe zu <b> --> https://stan-smith.github.io/FossFLOW/ <-- </b>
+Gehe zu <b> --> https://NoxzRCW.github.io/NoxFlow/ <-- </b>
 
 
 ------------------------------------------------------------------------------------------------------------------------------
-FossFLOW ist eine leistungsstarke, quelloffene Progressive Web App (PWA) zum Erstellen schöner isometrischer Diagramme. Gebaut mit React und der <a href="https://github.com/markmanx/isoflow">Isoflow</a>-Bibliothek (jetzt geforkt und auf NPM als fossflow veröffentlicht), läuft sie vollständig in deinem Browser mit Offline-Unterstützung.
+NoxFlow ist eine leistungsstarke, quelloffene Progressive Web App (PWA) zum Erstellen schöner isometrischer Diagramme. Gebaut mit React und der <a href="https://github.com/markmanx/isoflow">Isoflow</a>-Bibliothek (jetzt geforkt und auf NPM als noxflow veröffentlicht), läuft sie vollständig in deinem Browser mit Offline-Unterstützung.
 
 ![Screenshot_20250630_160954](https://github.com/user-attachments/assets/e7f254ad-625f-4b8a-8efc-5293b5be9d55)
 
-- **🤝 [CONTRIBUTING.md](https://github.com/stan-smith/FossFLOW/blob/master/CONTRIBUTING.md)** - Wie du zum Projekt beitragen kannst.
+- **🤝 [CONTRIBUTING.md](https://github.com/NoxzRCW/NoxFlow/blob/master/CONTRIBUTING.md)** - Wie du zum Projekt beitragen kannst.
 
 ## 🐳 Schnelle Bereitstellung mit Docker
 
@@ -36,22 +36,22 @@ FossFLOW ist eine leistungsstarke, quelloffene Progressive Web App (PWA) zum Ers
 docker compose up
 
 # Oder direkt von Docker Hub mit persistentem Speicher ausführen
-docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/fossflow:latest
+docker run -p 80:80 -v $(pwd)/diagrams:/data/diagrams stnsmith/noxflow:latest
 ```
 
 Server-Speicher ist in Docker standardmäßig aktiviert. Deine Diagramme werden in `./diagrams` auf dem Host gespeichert.
 
 Um den Server-Speicher zu deaktivieren, setze `ENABLE_SERVER_STORAGE=false`:
 ```bash
-docker run -p 80:80 -e ENABLE_SERVER_STORAGE=false stnsmith/fossflow:latest
+docker run -p 80:80 -e ENABLE_SERVER_STORAGE=false stnsmith/noxflow:latest
 ```
 
 ## Schnellstart (Lokale Entwicklung)
 
 ```bash
 # Repository klonen
-git clone https://github.com/stan-smith/FossFLOW
-cd FossFLOW
+git clone https://github.com/NoxzRCW/NoxFlow
+cd NoxFlow
 
 # Abhängigkeiten installieren
 npm install
@@ -69,8 +69,8 @@ npm run dev
 
 Dies ist ein Monorepo mit zwei Paketen:
 
-- `packages/fossflow-lib` - React-Komponentenbibliothek zum Zeichnen von Netzwerkdiagrammen (gebaut mit Webpack)
-- `packages/fossflow-app` - Progressive Web App, die die Bibliothek umhüllt und präsentiert (gebaut mit RSBuild)
+- `packages/noxflow-lib` - React-Komponentenbibliothek zum Zeichnen von Netzwerkdiagrammen (gebaut mit Webpack)
+- `packages/noxflow-app` - Progressive Web App, die die Bibliothek umhüllt und präsentiert (gebaut mit RSBuild)
 
 ### Entwicklungsbefehle
 

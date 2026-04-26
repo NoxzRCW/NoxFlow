@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Isoflow } from 'fossflow';
+import { Isoflow } from 'noxflow';
 import { flattenCollections } from '@isoflow/isopacks/dist/utils';
 import isoflowIsopack from '@isoflow/isopacks/dist/isoflow';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import { StorageManager } from './StorageManager';
 import { DiagramManager } from './components/DiagramManager';
 import { storageManager } from './services/storageService';
 import ChangeLanguage from './components/ChangeLanguage';
-import { allLocales } from 'fossflow';
+import { allLocales } from 'noxflow';
 import { useIconPackManager, IconPackName } from './services/iconPackManager';
 import { collabService } from './services/collabService';
 import { useCollab } from './hooks/useCollab';
@@ -89,7 +89,7 @@ function EditorPage() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [fossflowKey, setFossflowKey] = useState(0); // Key to force re-render of FossFLOW
+  const [noxflowKey, setFossflowKey] = useState(0); // Key to force re-render of NoxFlow
   const [currentModel, setCurrentModel] = useState<DiagramData | null>(null); // Store current model state
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null);
@@ -127,7 +127,7 @@ function EditorPage() {
   useEffect(() => {
     if (!isCollabEnabled || !isCollabConnected) return;
 
-    const container = document.querySelector('.fossflow-container');
+    const container = document.querySelector('.noxflow-container');
     if (!container) return;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -153,7 +153,7 @@ function EditorPage() {
   // Initialize with empty diagram data
   const [diagramData, setDiagramData] = useState<DiagramData>(() => {
     // Initialize with last opened data if available
-    const lastOpenedData = localStorage.getItem('fossflow-last-opened-data');
+    const lastOpenedData = localStorage.getItem('noxflow-last-opened-data');
     if (lastOpenedData) {
       try {
         const data = JSON.parse(lastOpenedData);
@@ -243,14 +243,14 @@ function EditorPage() {
 
   // Load diagrams from localStorage on component mount
   useEffect(() => {
-    const savedDiagrams = localStorage.getItem('fossflow-diagrams');
+    const savedDiagrams = localStorage.getItem('noxflow-diagrams');
     if (savedDiagrams) {
       setDiagrams(JSON.parse(savedDiagrams));
       setIsDiagramsInitialized(true);
     }
 
     // Load last opened diagram metadata (data is already loaded in state initialization)
-    const lastOpenedId = localStorage.getItem('fossflow-last-opened');
+    const lastOpenedId = localStorage.getItem('noxflow-last-opened');
 
     if (lastOpenedId && savedDiagrams) {
       try {
@@ -286,7 +286,7 @@ function EditorPage() {
         };
       });
       localStorage.setItem(
-        'fossflow-diagrams',
+        'noxflow-diagrams',
         JSON.stringify(diagramsToStore)
       );
     } catch (e) {
@@ -377,9 +377,9 @@ function EditorPage() {
 
     // Save as last opened
     try {
-      localStorage.setItem('fossflow-last-opened', newDiagram.id);
+      localStorage.setItem('noxflow-last-opened', newDiagram.id);
       localStorage.setItem(
-        'fossflow-last-opened-data',
+        'noxflow-last-opened-data',
         JSON.stringify(newDiagram.data)
       );
     } catch (e) {
@@ -422,15 +422,15 @@ function EditorPage() {
     setCurrentModel(dataWithIcons);
     setFossflowKey((prev) => {
       return prev + 1;
-    }); // Force re-render of FossFLOW
+    }); // Force re-render of NoxFlow
     setShowLoadDialog(false);
     setHasUnsavedChanges(false);
 
     // Save as last opened (without icons)
     try {
-      localStorage.setItem('fossflow-last-opened', diagram.id);
+      localStorage.setItem('noxflow-last-opened', diagram.id);
       localStorage.setItem(
-        'fossflow-last-opened-data',
+        'noxflow-last-opened-data',
         JSON.stringify(diagram.data)
       );
     } catch (e) {
@@ -472,12 +472,12 @@ function EditorPage() {
       setCurrentModel(emptyDiagram); // Reset current model too
       setFossflowKey((prev) => {
         return prev + 1;
-      }); // Force re-render of FossFLOW
+      }); // Force re-render of NoxFlow
       setHasUnsavedChanges(false);
 
       // Clear last opened
-      localStorage.removeItem('fossflow-last-opened');
-      localStorage.removeItem('fossflow-last-opened-data');
+      localStorage.removeItem('noxflow-last-opened');
+      localStorage.removeItem('noxflow-last-opened-data');
     }
   };
 
@@ -642,7 +642,7 @@ function EditorPage() {
     setDiagramData(mergedData);
     setFossflowKey((prev) => {
       const newKey = prev + 1;
-      console.log(`App: Updated fossflowKey from ${prev} to ${newKey}`);
+      console.log(`App: Updated noxflowKey from ${prev} to ${newKey}`);
       return newKey;
     });
 
@@ -695,7 +695,7 @@ function EditorPage() {
       // Update last opened data
       try {
         localStorage.setItem(
-          'fossflow-last-opened-data',
+          'noxflow-last-opened-data',
           JSON.stringify(savedData)
         );
         setLastAutoSave(new Date());
@@ -970,9 +970,9 @@ function EditorPage() {
         </span>
       </div>
 
-      <div className="fossflow-container" style={{ position: 'relative' }}>
+      <div className="noxflow-container" style={{ position: 'relative' }}>
         <Isoflow
-          key={fossflowKey}
+          key={noxflowKey}
           initialData={diagramData}
           onModelUpdated={handleModelUpdated}
           editorMode={isReadonlyUrl ? 'EXPLORABLE_READONLY' : 'EDITABLE'}

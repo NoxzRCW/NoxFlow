@@ -15,7 +15,7 @@ interface Props {
 }
 
 // Store recently used icons in localStorage
-const RECENT_ICONS_KEY = 'fossflow-recent-icons';
+const RECENT_ICONS_KEY = 'noxflow-recent-icons';
 const MAX_RECENT_ICONS = 12;
 
 const getRecentIcons = (): string[] => {

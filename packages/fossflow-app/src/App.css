@@ -68,13 +68,13 @@
 
 /* ── Canvas Container ──────────────────────────────────── */
 
-.fossflow-container {
+.noxflow-container {
   flex: 1;
   width: 100%;
   position: relative;
 }
 
-.fossflow-container > div {
+.noxflow-container > div {
   height: 100%;
 }
 
@@ -333,7 +333,7 @@
   }
 
   /* ── Canvas fills remaining space ────────────────────── */
-  .fossflow-container {
+  .noxflow-container {
     order: 1;
     flex: 1;
     min-height: 0;
