@@ -44,12 +44,14 @@ RUN chmod +x /docker-entrypoint.sh
 RUN mkdir -p /data/diagrams
 
 # Expose ports
-EXPOSE 80 3001
+EXPOSE 80 3001 3002
 
 # Environment variables with defaults
 ENV ENABLE_SERVER_STORAGE=true
 ENV STORAGE_PATH=/data/diagrams
 ENV BACKEND_PORT=3001
+ENV COLLAB_PORT=3002
+ENV ENABLE_COLLAB=true
 
 # Start services
 ENTRYPOINT ["/docker-entrypoint.sh"]
