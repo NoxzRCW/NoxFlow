@@ -40,6 +40,16 @@ function useIsMobile(breakpoint = 768) {
 // Load core isoflow icons (always loaded)
 const coreIcons = flattenCollections([isoflowIsopack]);
 
+const defaultColors = [
+  { id: 'blue', value: '#0066cc' },
+  { id: 'green', value: '#00aa00' },
+  { id: 'red', value: '#cc0000' },
+  { id: 'orange', value: '#ff9900' },
+  { id: 'purple', value: '#9900cc' },
+  { id: 'black', value: '#000000' },
+  { id: 'gray', value: '#666666' }
+];
+
 interface SavedDiagram {
   id: string;
   name: string;
@@ -131,17 +141,6 @@ function EditorPage() {
   }, [isCollabEnabled, isCollabConnected, sendCursorPosition]);
 
   // Initialize with empty diagram data
-  // Create default colors for connectors
-  const defaultColors = [
-    { id: 'blue', value: '#0066cc' },
-    { id: 'green', value: '#00aa00' },
-    { id: 'red', value: '#cc0000' },
-    { id: 'orange', value: '#ff9900' },
-    { id: 'purple', value: '#9900cc' },
-    { id: 'black', value: '#000000' },
-    { id: 'gray', value: '#666666' }
-  ];
-
   const [diagramData, setDiagramData] = useState<DiagramData>(() => {
     // Initialize with last opened data if available
     const lastOpenedData = localStorage.getItem('fossflow-last-opened-data');
@@ -472,14 +471,10 @@ function EditorPage() {
     }
   };
 
-  const handleModelUpdated = (model: any) => {
-    // Store the current model state whenever it updates
-    // The model from Isoflow contains the COMPLETE state including all icons
-
-    // Simply store the complete model as-is since it has everything
+  const handleModelUpdated = useCallback((model: any) => {
     const updatedModel = {
       title: model.title || diagramName || 'Untitled',
-      icons: model.icons || [], // This already includes ALL icons (default + imported)
+      icons: model.icons || [],
       colors: model.colors || defaultColors,
       items: model.items || [],
       views: model.views || [],
@@ -492,7 +487,7 @@ function EditorPage() {
     if (!isReadonlyUrl) {
       setHasUnsavedChanges(true);
     }
-  };
+  }, [diagramName, isReadonlyUrl]);
 
   const exportDiagram = () => {
     // Use the most recent model data - prefer currentModel as it gets updated by handleModelUpdated
@@ -707,7 +702,7 @@ function EditorPage() {
     return () => {
       return clearTimeout(autoSaveTimer);
     };
-  }, [currentModel, hasUnsavedChanges, currentDiagram, diagramName]);
+  }, [currentModel, hasUnsavedChanges, currentDiagram, diagramName, t]);
 
   // Warn before closing if there are unsaved changes
   useEffect(() => {
@@ -723,7 +718,7 @@ function EditorPage() {
     return () => {
       return window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [hasUnsavedChanges]);
+  }, [hasUnsavedChanges, t]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -959,7 +954,7 @@ function EditorPage() {
 
       <div className="fossflow-container" style={{ position: 'relative' }}>
         <Isoflow
-          key={`${fossflowKey}-${i18n.language}`}
+          key={fossflowKey}
           initialData={diagramData}
           onModelUpdated={handleModelUpdated}
           editorMode={isReadonlyUrl ? 'EXPLORABLE_READONLY' : 'EDITABLE'}
