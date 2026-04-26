@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = (typeof process !== 'undefined' && process.env?.REACT_APP_COLLAB_URL) || `http://${window.location.hostname}:3002`;
+const SOCKET_URL = (typeof process !== 'undefined' && process.env?.REACT_APP_COLLAB_URL) || window.location.origin;
 
 export interface CollabUser {
   id: string;
