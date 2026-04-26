@@ -123,7 +123,7 @@ function EditorPage() {
     };
   }, [collabParam, isReadonlyUrl, enableCollab, disableCollab]);
 
-  // Track mouse position for cursor sharing
+  // Track mouse/touch position for cursor sharing
   useEffect(() => {
     if (!isCollabEnabled || !isCollabConnected) return;
 
@@ -135,8 +135,19 @@ function EditorPage() {
       sendCursorPosition(e.clientX - rect.left, e.clientY - rect.top);
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = container.getBoundingClientRect();
+      sendCursorPosition(touch.clientX - rect.left, touch.clientY - rect.top);
+    };
+
     container.addEventListener('mousemove', handleMouseMove);
-    return () => container.removeEventListener('mousemove', handleMouseMove);
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    return () => {
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
   }, [isCollabEnabled, isCollabConnected, sendCursorPosition]);
 
   // Initialize with empty diagram data
