@@ -70,7 +70,7 @@ router.get('/rooms', (_req: Request, res: Response) => {
  * GET /api/rooms/:id
  * Get room details
  */
-router.get('/rooms/:id', (req: Request, res: Response) => {
+router.get('/rooms/:id', (req: Request<{ id: string }>, res: Response) => {
   const room = roomStore.getRoom(req.params.id);
   if (!room) {
     const response: ApiResponse = {
@@ -100,7 +100,7 @@ router.get('/rooms/:id', (req: Request, res: Response) => {
  * DELETE /api/rooms/:id
  * Delete a room
  */
-router.delete('/rooms/:id', (req: Request, res: Response) => {
+router.delete('/rooms/:id', (req: Request<{ id: string }>, res: Response) => {
   const deleted = roomStore.deleteRoom(req.params.id);
   if (!deleted) {
     const response: ApiResponse = {
@@ -122,7 +122,7 @@ router.delete('/rooms/:id', (req: Request, res: Response) => {
  * POST /api/rooms/:id/join
  * Join a room (returns room state for REST clients)
  */
-router.post('/rooms/:id/join', (req: Request, res: Response) => {
+router.post('/rooms/:id/join', (req: Request<{ id: string }>, res: Response) => {
   const roomId = req.params.id;
   const { userName } = req.body;
 
@@ -165,7 +165,7 @@ router.post('/rooms/:id/join', (req: Request, res: Response) => {
  * GET /api/rooms/:id/participants
  * List participants in a room
  */
-router.get('/rooms/:id/participants', (req: Request, res: Response) => {
+router.get('/rooms/:id/participants', (req: Request<{ id: string }>, res: Response) => {
   const roomId = req.params.id;
   const room = roomStore.getRoom(roomId);
   if (!room) {
@@ -197,7 +197,7 @@ router.get('/rooms/:id/participants', (req: Request, res: Response) => {
  * GET /api/rooms/:id/state
  * Get current room state (nodes + connectors)
  */
-router.get('/rooms/:id/state', (req: Request, res: Response) => {
+router.get('/rooms/:id/state', (req: Request<{ id: string }>, res: Response) => {
   const roomId = req.params.id;
   const state = roomStore.getRoomState(roomId);
   if (!state) {
@@ -225,7 +225,7 @@ router.get('/rooms/:id/state', (req: Request, res: Response) => {
  * POST /api/rooms/:id/nodes
  * Add/update a node via REST (for non-WS clients)
  */
-router.post('/rooms/:id/nodes', (req: Request, res: Response) => {
+router.post('/rooms/:id/nodes', (req: Request<{ id: string }>, res: Response) => {
   const roomId = req.params.id;
   const { id: nodeId, type, position, data, style } = req.body;
 
@@ -263,7 +263,7 @@ router.post('/rooms/:id/nodes', (req: Request, res: Response) => {
  * DELETE /api/rooms/:id/nodes/:nodeId
  * Delete a node via REST
  */
-router.delete('/rooms/:id/nodes/:nodeId', (req: Request, res: Response) => {
+router.delete('/rooms/:id/nodes/:nodeId', (req: Request<{ id: string; nodeId: string }>, res: Response) => {
   const roomId = req.params.id;
   const nodeId = req.params.nodeId;
 
