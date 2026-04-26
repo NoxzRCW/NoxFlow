@@ -15,6 +15,8 @@ export default defineConfig({
             // Force React to resolve from root node_modules
             'react': path.join(rootNodeModules, 'react'),
             'react-dom': path.join(rootNodeModules, 'react-dom'),
+            // Alias fossflow to noxflow for backward compatibility
+            'fossflow': path.join(rootNodeModules, 'noxflow'),
         },
     },
     html: {
