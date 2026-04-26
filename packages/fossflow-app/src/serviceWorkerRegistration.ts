@@ -14,7 +14,7 @@ type Config = {
 export function register(config?: Config) {
   if ('serviceWorker' in navigator) {
     // Ensure PUBLIC_URL ends with slash for consistent path construction
-    const publicUrlPath = process.env.PUBLIC_URL || '';
+    const publicUrlPath = (typeof process !== 'undefined' && process.env?.PUBLIC_URL) || '';
     const basePath = publicUrlPath ? (publicUrlPath.endsWith('/') ? publicUrlPath : publicUrlPath + '/') : '/';
 
     const publicUrl = new URL(basePath, window.location.href);

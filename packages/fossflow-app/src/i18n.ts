@@ -4,7 +4,7 @@ import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Ensure PUBLIC_URL ends with slash for consistent path construction
-const publicUrl = process.env.PUBLIC_URL || '';
+const publicUrl = (typeof process !== 'undefined' && process.env?.PUBLIC_URL) || '';
 const basePath = publicUrl ? (publicUrl.endsWith('/') ? publicUrl : publicUrl + '/') : '/';
 
 i18n
@@ -13,7 +13,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'en-US',
-    debug: process.env.NODE_ENV === 'development',
+    debug: (typeof process !== 'undefined' && process.env?.NODE_ENV) === 'development',
     interpolation: {
       escapeValue: false
     },

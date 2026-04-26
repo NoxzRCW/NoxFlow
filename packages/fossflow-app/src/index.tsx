@@ -29,7 +29,7 @@ root.render(
 reportWebVitals();
 
 // Service worker registration - only in production for PWA functionality
-if (process.env.NODE_ENV === 'production') {
+if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') {
   serviceWorkerRegistration.register({
     onSuccess: () => console.log('Service worker registered successfully'),
     onUpdate: () => console.log('Service worker update available')
