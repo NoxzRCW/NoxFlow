@@ -101,7 +101,8 @@ function EditorPage() {
 
   // ── Real-time Collaboration ────────────────────────────
   const [searchParams] = useSearchParams();
-  const collabRoomId = searchParams.get('collab') || currentDiagram?.id || `room_${Date.now()}`;
+  const collabParam = searchParams.get('collab');
+  const collabRoomId = collabParam || currentDiagram?.id || undefined;
   const {
     sendCursorPosition,
     enableCollab,
@@ -115,14 +116,12 @@ function EditorPage() {
   const collabUserName = useRef(`User ${Math.floor(Math.random() * 10000)}`).current;
 
   useEffect(() => {
-    // Auto-enable collaboration when a room is set via URL or when a diagram is loaded
-    if (collabRoomId && !isReadonlyUrl && searchParams.get('collab')) {
-      enableCollab();
-    }
+    if (!collabParam || isReadonlyUrl) return;
+    enableCollab();
     return () => {
       disableCollab();
     };
-  }, [collabRoomId]);
+  }, [collabParam, isReadonlyUrl, enableCollab, disableCollab]);
 
   // Track mouse position for cursor sharing
   useEffect(() => {
