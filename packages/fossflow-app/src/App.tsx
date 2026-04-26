@@ -100,7 +100,7 @@ function EditorPage() {
     window.location.pathname.startsWith('/display/') && readonlyDiagramId;
 
   // ── Real-time Collaboration ────────────────────────────
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const collabParam = searchParams.get('collab');
   const collabRoomId = collabParam || currentDiagram?.id || undefined;
   const {
@@ -905,7 +905,15 @@ function EditorPage() {
                   {t('nav.quickSaveSession')}
                 </button>
                 {/* Collaboration Share Button */}
-                <ShareButton roomId={collabRoomId} />
+                <ShareButton
+                  roomId={collabRoomId}
+                  isCollabActive={isCollabEnabled}
+                  onActivate={() => {
+                    if (collabRoomId && !collabParam) {
+                      setSearchParams({ collab: collabRoomId });
+                    }
+                  }}
+                />
               </>
             )}
           </>
